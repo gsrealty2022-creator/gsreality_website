@@ -4,16 +4,19 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 interface Property {
-  _id: string;
+  _id?: string;
+  id?: string | number;
   name: string;
-  price: number;
+  price: number | string;
   location: string;
-  images: string[];
+  image: string;
+  images?: string[];
   bedrooms?: number;
   bathrooms?: number;
   area?: number;
   subCategory?: string;
   createdAt?: string;
+  typology?: string;
 }
 
 export default function NewlyLaunchedProjects() {
@@ -66,7 +69,8 @@ export default function NewlyLaunchedProjects() {
           const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
           return dateB - dateA;
         });
-        const formatted = sorted.slice(0, 3).map((prop: Property) => ({
+        const formatted: Property[] = sorted.slice(0, 3).map((prop: any) => ({
+          _id: prop._id,
           id: prop._id,
           name: prop.name,
           price: `₹ ${(prop.price / 10000000).toFixed(1)}Cr${prop.price > 10000000 ? ` - ₹ ${((prop.price * 1.5) / 10000000).toFixed(1)}Cr` : ''}`,
@@ -112,8 +116,8 @@ export default function NewlyLaunchedProjects() {
         <div className="relative">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {projects.map((project) => (
-              <div 
-                key={project.id} 
+              <div
+                key={project.id}
                 onClick={() => window.location.href = `/view-details/${String(project.id)}`}
                 className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"
               >

@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface Developer {
-  _id: string;
+  _id?: string;
+  id?: string | number;
   name: string;
-  logo?: string;
-  description?: string;
+  logo: React.ReactNode;
+  isDatabase?: boolean;
 }
 
 export default function FeaturedDevelopers() {
@@ -105,7 +106,7 @@ export default function FeaturedDevelopers() {
       if (response.ok) {
         const data = await response.json();
         // Convert database developers to display format
-        const formatted = data.map((dev: Developer) => ({
+        const formatted: Developer[] = data.map((dev: any) => ({
           id: dev._id,
           _id: dev._id,
           name: dev.name,
@@ -165,12 +166,12 @@ export default function FeaturedDevelopers() {
         <div className="relative overflow-hidden">
           <div className="flex animate-scroll-left">
             {developers.map((developer, index) => (
-              <div 
+              <div
                 key={`${developer.id}-${index}`}
                 className="flex-shrink-0 px-3"
                 style={{ width: '300px' }}
               >
-                <div 
+                <div
                   className="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow border border-gray-200 cursor-pointer"
                   onClick={() => handleDeveloperClick(developer)}
                 >
