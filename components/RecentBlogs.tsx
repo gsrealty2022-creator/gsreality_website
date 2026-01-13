@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 
 interface Blog {
-  _id: string;
+  _id?: string;
+  id?: string | number;
   title: string;
   author: string;
   date: string;
@@ -54,7 +55,8 @@ export default function RecentBlogs() {
       if (response.ok) {
         const data = await response.json();
         // Take first 3 blogs
-        const formatted = data.slice(0, 3).map((blog: Blog) => ({
+        const formatted: Blog[] = data.slice(0, 3).map((blog: any) => ({
+          _id: blog._id,
           id: blog._id,
           title: blog.title,
           author: blog.author,

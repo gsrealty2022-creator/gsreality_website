@@ -4,16 +4,19 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 interface Property {
-  _id: string;
+  _id?: string;
+  id?: string | number;
   name: string;
-  price: number;
+  price: number | string;
   location: string;
-  images: string[];
+  images?: string[];
+  image?: string;
   description?: string;
   bedrooms?: number;
   bathrooms?: number;
   area?: number;
   subCategory?: string;
+  typology?: string;
 }
 
 export default function PremiumProjects() {
@@ -81,7 +84,8 @@ export default function PremiumProjects() {
         // Filter properties that should be shown in Premium Projects
         const premiumProperties = data.filter((prop: any) => prop.showInPremium === true);
         // Convert database properties to display format
-        const formatted = premiumProperties.slice(0, 5).map((prop: Property) => ({
+        const formatted: Property[] = premiumProperties.slice(0, 5).map((prop: any) => ({
+          _id: prop._id,
           id: prop._id,
           name: prop.name.toUpperCase(),
           price: `₹ ${(prop.price / 10000000).toFixed(1)}Cr${prop.price > 10000000 ? ` - ₹ ${((prop.price * 1.5) / 10000000).toFixed(1)}Cr` : ''}`,

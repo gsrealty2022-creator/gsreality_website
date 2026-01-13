@@ -4,14 +4,16 @@ import { useState, useEffect } from 'react';
 import PropertyCard from './PropertyCard';
 
 interface Property {
-  _id: string;
+  id?: string | number;
+  _id?: string;
   title: string;
   location: string;
   price: number;
   bedrooms?: number;
   bathrooms?: number;
   area?: number;
-  images: string[];
+  image?: string;
+  images?: string[];
   type?: string;
   subCategory?: string;
 }
@@ -140,7 +142,7 @@ export default function PropertyListings() {
             Explore our handpicked selection of premium properties designed to meet your lifestyle needs
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {loading ? (
             <div className="col-span-full text-center py-12">
