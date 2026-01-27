@@ -19,9 +19,15 @@ export async function GET(
             return NextResponse.json({ error: 'Location not found' }, { status: 404 });
         }
 
+        // Dynamically calculate propertyCount
+        const propertyCount = await db.collection('properties').countDocuments({
+            locationIds: { $in: [id, new ObjectId(id)] }
+        });
+
         return NextResponse.json({
             ...location,
-            id: location._id.toString()
+            id: location._id.toString(),
+            propertyCount: propertyCount // Override stored propertyCount with actual dynamic count
         }, { status: 200 });
     } catch (error: any) {
         console.error('Error fetching location:', error);

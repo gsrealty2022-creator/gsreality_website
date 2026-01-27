@@ -132,7 +132,7 @@ export default function PropertyListings() {
 
     if (locationId) {
       const filtered = databaseProperties.filter((prop: any) =>
-        prop.locationIds && prop.locationIds.includes(locationId)
+        prop.locationIds && prop.locationIds.some((id: any) => id.toString() === locationId)
       );
       setFilteredProperties(filtered);
     } else {

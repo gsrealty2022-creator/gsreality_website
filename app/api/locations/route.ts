@@ -5,14 +5,20 @@ import { getDatabase } from '@/lib/mongodb';
 export async function GET(request: NextRequest) {
     try {
         const db = await getDatabase();
-        // Sort by createdAt descending to show newest first
+        // Fetch all locations
         const locations = await db.collection('locations').find({}).sort({ createdAt: -1 }).toArray();
 
-        // Map _id to id to match the frontend interface if needed, or frontend should handle _id
-        // For now, let's keep it as is, frontend might need to adjust to use _id
-        const formattedLocations = locations.map(loc => ({
-            ...loc,
-            id: loc._id.toString(), // Convert ObjectId to string id for easier frontend handling
+        // Dynamically calculate propertyCount for each location
+        const formattedLocations = await Promise.all(locations.map(async (loc) => {
+            const count = await db.collection('properties').countDocuments({
+                locationIds: { $in: [loc._id.toString(), loc._id] }
+            });
+
+            return {
+                ...loc,
+                id: loc._id.toString(),
+                propertyCount: count // Override stored propertyCount with actual dynamic count
+            };
         }));
 
         return NextResponse.json(formattedLocations, { status: 200 });
