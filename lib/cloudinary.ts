@@ -25,7 +25,7 @@ export async function uploadImage(
           { width: 800, height: 800, crop: 'limit', quality: 'auto', format: 'auto' },
         ],
       });
-    } else if (file instanceof Buffer) {
+    } else if (Buffer.isBuffer(file)) {
       // If it's a buffer (file upload)
       uploadResult = await new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
@@ -42,8 +42,8 @@ export async function uploadImage(
         ).end(file);
       });
     } else {
-      // If it's a File object, convert to buffer
-      const arrayBuffer = await file.arrayBuffer();
+      // If it's a File or Blob object
+      const arrayBuffer = await (file as any).arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       uploadResult = await new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
@@ -82,7 +82,7 @@ export async function uploadVideo(
         folder,
         transformation: [{ width: 800, height: 600, crop: 'limit', quality: 'auto' }],
       });
-    } else if (file instanceof Buffer) {
+    } else if (Buffer.isBuffer(file)) {
       uploadResult = await new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
           {
@@ -97,7 +97,7 @@ export async function uploadVideo(
         ).end(file);
       });
     } else {
-      const arrayBuffer = await file.arrayBuffer();
+      const arrayBuffer = await (file as any).arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       uploadResult = await new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
