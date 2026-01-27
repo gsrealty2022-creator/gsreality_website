@@ -107,7 +107,7 @@ export default function NewlyLaunchedProjects() {
         {/* Heading */}
         <div className="mb-12">
           <h2 className="text-4xl md:text-5xl font-bold flex items-center">
-            <span className="text-brand-red">Newly Launched</span>
+            <span className="text-brand-secondary">Newly Launched</span>
             <span className="text-gray-900 ml-4">Projects</span>
           </h2>
         </div>
@@ -135,7 +135,7 @@ export default function NewlyLaunchedProjects() {
                 {/* Content */}
                 <div className="p-6 relative">
                   {/* Share Icon */}
-                  <button className="absolute top-6 right-6 w-10 h-10 bg-brand-teal rounded-full flex items-center justify-center hover:bg-brand-teal-dark transition shadow-md">
+                  <button className="absolute top-6 right-6 w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center hover:bg-brand-primary-dark transition shadow-md">
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                     </svg>
@@ -147,7 +147,7 @@ export default function NewlyLaunchedProjects() {
                   </h3>
 
                   {/* Price */}
-                  <div className="text-brand-red font-semibold text-lg mb-3">
+                  <div className="text-brand-secondary font-semibold text-lg mb-3">
                     {project.price}
                   </div>
 
@@ -176,14 +176,14 @@ export default function NewlyLaunchedProjects() {
           <div className="flex items-center justify-center mt-12 space-x-4">
             {/* Progress Indicator */}
             <div className="flex items-center space-x-2">
-              <div className="w-12 h-1 bg-brand-red rounded"></div>
+              <div className="w-12 h-1 bg-brand-secondary rounded"></div>
               <div className="w-24 h-1 bg-gray-300 rounded"></div>
             </div>
 
             {/* Arrow Buttons */}
             <button
               onClick={prevSlide}
-              className="w-10 h-10 rounded-full bg-white border-2 border-gray-300 flex items-center justify-center hover:border-brand-red hover:bg-brand-red/10 transition"
+              className="w-10 h-10 rounded-full bg-white border-2 border-gray-300 flex items-center justify-center hover:border-brand-secondary hover:bg-brand-secondary/10 transition"
               aria-label="Previous"
             >
               <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -192,7 +192,7 @@ export default function NewlyLaunchedProjects() {
             </button>
             <button
               onClick={nextSlide}
-              className="w-10 h-10 rounded-full bg-white border-2 border-gray-300 flex items-center justify-center hover:border-brand-red hover:bg-brand-red/10 transition"
+              className="w-10 h-10 rounded-full bg-white border-2 border-gray-300 flex items-center justify-center hover:border-brand-secondary hover:bg-brand-secondary/10 transition"
               aria-label="Next"
             >
               <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

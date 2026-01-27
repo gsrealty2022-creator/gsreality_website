@@ -23,8 +23,8 @@ export default function Logo({ size = 'navbar' }: LogoProps) {
   return (
     <div className="flex items-center">
       <Image
-        src="/fd_makan_logo-removebg-preview.png"
-        alt="FD MAKAN Logo"
+        src="/gs_reality.png"
+        alt="GS Reality Logo"
         width={config.width}
         height={config.height}
         className={config.className}

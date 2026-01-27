@@ -103,15 +103,15 @@ export default function PageNavigation() {
                 relative px-3 py-2.5 text-xs font-semibold rounded-lg transition-all duration-300 text-left
                 ${
                   activeSection === item.id
-                    ? 'bg-brand-red text-white shadow-md scale-105'
-                    : 'text-gray-600 hover:text-brand-red hover:bg-brand-red/10'
+                    ? 'bg-brand-secondary text-white shadow-md scale-105'
+                    : 'text-gray-600 hover:text-brand-secondary hover:bg-brand-secondary/10'
                 }
               `}
               title={item.label}
             >
               <span className="block whitespace-nowrap">{item.label}</span>
               {activeSection === item.id && (
-                <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-3 w-1.5 h-8 bg-brand-red rounded-r-full"></div>
+                <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-3 w-1.5 h-8 bg-brand-secondary rounded-r-full"></div>
               )}
             </button>
           ))}

@@ -1,6 +1,9 @@
+'use client';
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Image from "next/image";
+import Link from "next/link";
 
 const newsArticles = [
   {
@@ -57,26 +60,33 @@ export default function NewsPage() {
   return (
     <main className="min-h-screen">
       <Header />
-      
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-teal-500 to-orange-500 text-white py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">Real Estate News</h1>
-            <p className="text-xl text-white/90">
-              Stay updated with the latest trends, insights, and market news
-            </p>
-          </div>
+
+      {/* Hero Section with Background Image */}
+      <section className="relative h-[400px] flex items-center justify-center overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1600&h=600&fit=crop')",
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/50 to-black/60"></div>
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 text-center text-white px-4">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4">Real Estate Blogs</h1>
         </div>
       </section>
+
 
       {/* News Articles */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {newsArticles.map((article) => (
-              <article 
-                key={article.id} 
+              <article
+                key={article.id}
                 className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100 group"
               >
                 <div className="relative h-48 w-full overflow-hidden">
@@ -88,7 +98,7 @@ export default function NewsPage() {
                     className="object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className="absolute top-4 left-4">
-                    <span className="bg-gradient-to-r from-teal-500 to-orange-500 text-white px-4 py-1.5 rounded-full text-xs font-semibold shadow-lg">
+                    <span className="bg-brand-secondary text-white px-4 py-1.5 rounded-full text-xs font-semibold shadow-lg">
                       {article.category}
                     </span>
                   </div>
@@ -96,20 +106,20 @@ export default function NewsPage() {
                 </div>
                 <div className="p-6">
                   <div className="text-sm text-gray-500 mb-3 flex items-center">
-                    <svg className="w-4 h-4 mr-2 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 mr-2 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     {article.date}
                   </div>
-                  <h2 className="text-xl font-bold text-[#1a365d] mb-3 group-hover:text-teal-500 transition-colors">
+                  <h2 className="text-xl font-bold text-[#1a365d] mb-3 group-hover:text-brand-primary transition-colors">
                     {article.title}
                   </h2>
                   <p className="text-gray-600 mb-4 line-clamp-3 leading-relaxed">
                     {article.excerpt}
                   </p>
-                  <a 
-                    href="#" 
-                    className="text-teal-500 font-semibold hover:text-orange-500 transition inline-flex items-center group"
+                  <a
+                    href="#"
+                    className="text-brand-primary font-semibold hover:text-brand-secondary transition inline-flex items-center group"
                   >
                     Read More
                     <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,22 +134,22 @@ export default function NewsPage() {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-20 bg-gradient-to-r from-teal-500 to-orange-500">
+      <section className="py-20 bg-gradient-to-r from-brand-secondary via-brand-secondary-light to-white">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-4xl font-bold text-white mb-4">Subscribe to Our Newsletter</h2>
-            <p className="text-white/90 text-lg mb-8">
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">Subscribe to Our Newsletter</h2>
+            <p className="text-gray-700 text-lg mb-8">
               Get the latest real estate news and market insights delivered to your inbox
             </p>
             <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-6 py-4 border-2 border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-white bg-white/90 placeholder-gray-500 font-medium"
+                className="flex-1 px-6 py-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary bg-white placeholder-gray-500 font-medium"
               />
               <button
                 type="submit"
-                className="bg-white text-orange-500 px-8 py-4 rounded-lg font-bold hover:bg-gray-100 transition shadow-lg hover:shadow-xl"
+                className="bg-brand-primary text-white px-8 py-4 rounded-lg font-bold hover:bg-brand-primary-light transition shadow-lg hover:shadow-xl"
               >
                 Subscribe
               </button>

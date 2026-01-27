@@ -115,13 +115,13 @@ export default function PremiumProjects() {
   const bottomProjects = allProjects.slice(2, 5);
 
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-brand-primary text-white">
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Heading */}
         <div className="mb-12">
           <h2 className="text-4xl md:text-5xl font-bold flex items-center">
-            <span className="text-brand-red">Premium</span>
-            <span className="text-gray-900 ml-4">Projects</span>
+            <span className="text-brand-secondary">Premium</span>
+            <span className="text-white ml-4">Projects</span>
           </h2>
         </div>
 
@@ -155,7 +155,7 @@ export default function PremiumProjects() {
                       {project.name}
                     </h3>
                     {/* Red Ray - Appears on Hover */}
-                    <div className="h-1 bg-brand-red w-0 group-hover:w-full transition-all duration-500 ease-out mb-3"></div>
+                    <div className="h-1 bg-brand-secondary w-0 group-hover:w-full transition-all duration-500 ease-out mb-3"></div>
                     {project.description && (
                       <p className="text-white/90 text-sm md:text-base max-w-md leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                         {project.description}
@@ -204,7 +204,7 @@ export default function PremiumProjects() {
                       {project.name}
                     </h3>
                     {/* Red Ray - Appears on Hover */}
-                    <div className="h-1 bg-brand-red w-0 group-hover:w-full transition-all duration-500 ease-out mb-3"></div>
+                    <div className="h-1 bg-brand-secondary w-0 group-hover:w-full transition-all duration-500 ease-out mb-3"></div>
                     {project.description && (
                       <p className="text-white/90 text-xs md:text-sm max-w-xs leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-700 line-clamp-2">
                         {project.description}

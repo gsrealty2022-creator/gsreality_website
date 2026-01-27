@@ -36,7 +36,7 @@ interface Property {
 export default function DeveloperDetailsPage() {
   const params = useParams();
   const developerId = params.id as string;
-  
+
   const [developer, setDeveloper] = useState<Developer | null>(null);
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,7 +68,7 @@ export default function DeveloperDetailsPage() {
         const allProperties = await response.json();
         // Filter properties by developer name
         if (developer) {
-          const developerProperties = allProperties.filter((prop: Property) => 
+          const developerProperties = allProperties.filter((prop: Property) =>
             prop.developer === developer.name
           );
           setProperties(developerProperties);
@@ -114,7 +114,7 @@ export default function DeveloperDetailsPage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      
+
       {/* Developer Header Section */}
       <section className="bg-gradient-to-r from-gray-50 to-white py-16">
         <div className="container mx-auto px-4 max-w-7xl">
@@ -132,7 +132,7 @@ export default function DeveloperDetailsPage() {
                   />
                 </div>
               ) : (
-                <div className="w-48 h-48 bg-gradient-to-br from-brand-teal to-brand-red rounded-xl flex items-center justify-center shadow-lg">
+                <div className="w-48 h-48 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-xl flex items-center justify-center shadow-lg">
                   <div className="text-white font-bold text-2xl text-center px-4">
                     {developer.name.toUpperCase()}
                   </div>
@@ -145,13 +145,13 @@ export default function DeveloperDetailsPage() {
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                 {developer.name}
               </h1>
-              
+
               {developer.rating && (
                 <div className="flex items-center justify-center md:justify-start mb-4">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <svg
                       key={star}
-                      className={`w-6 h-6 ${star <= (developer.rating || 5) ? 'text-orange-400' : 'text-gray-300'}`}
+                      className={`w-6 h-6 ${star <= (developer.rating || 5) ? 'text-brand-secondary' : 'text-gray-300'}`}
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -164,7 +164,7 @@ export default function DeveloperDetailsPage() {
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-6 text-sm text-gray-600">
                 {developer.establishedYear && (
                   <span className="flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 mr-2 text-brand-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     Est. {developer.establishedYear}
@@ -172,7 +172,7 @@ export default function DeveloperDetailsPage() {
                 )}
                 {developer.totalProjects && (
                   <span className="flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-brand-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 mr-2 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                     {developer.totalProjects} Projects
@@ -183,7 +183,7 @@ export default function DeveloperDetailsPage() {
                     href={developer.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center text-brand-red hover:text-brand-red-dark transition"
+                    className="flex items-center text-brand-secondary hover:text-brand-secondary-dark transition"
                   >
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />

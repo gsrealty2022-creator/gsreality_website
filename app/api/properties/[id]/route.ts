@@ -73,6 +73,7 @@ export async function PUT(
       specifications,
       // Connectivity
       connectivity,
+      locationIds,
     } = body;
 
     // Build update object
@@ -113,6 +114,7 @@ export async function PUT(
     if (specifications !== undefined) updateData.specifications = specifications;
     // Connectivity
     if (connectivity !== undefined) updateData.connectivity = connectivity;
+    if (locationIds !== undefined) updateData.locationIds = locationIds;
 
     const result = await db.collection('properties').updateOne(
       { _id: new ObjectId(params.id) },

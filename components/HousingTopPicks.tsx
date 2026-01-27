@@ -70,7 +70,7 @@ export default function HousingTopPicks() {
         {/* Heading */}
         <div className="mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
-            FD MAKAN's top picks
+            GS Reality's top picks
           </h2>
           <p className="text-gray-600 text-lg">
             Explore top living options with us.
@@ -82,7 +82,7 @@ export default function HousingTopPicks() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Project Card */}
             <div className="lg:col-span-3 relative">
-              <div className="bg-brand-red/10 rounded-2xl p-4 shadow-lg h-full relative">
+              <div className="bg-brand-secondary/10 rounded-2xl p-4 shadow-lg h-full relative">
                 {/* Navigation Arrow - Left */}
                 <button
                   onClick={prevSlide}
@@ -106,7 +106,7 @@ export default function HousingTopPicks() {
                   <h3 className="font-bold text-gray-900 text-sm leading-tight">
                     {projects[(currentIndex - 1 + projects.length) % projects.length].developerName}
                   </h3>
-                  <a href="#" className="text-brand-teal text-xs font-medium hover:underline">
+                  <a href="#" className="text-brand-primary text-xs font-medium hover:underline">
                     View Projects
                   </a>
                 </div>
@@ -119,7 +119,7 @@ export default function HousingTopPicks() {
                   <p className="text-gray-600 text-xs">
                     {projects[(currentIndex - 1 + projects.length) % projects.length].location}
                   </p>
-                  <p className="text-brand-red font-semibold text-sm">
+                  <p className="text-brand-secondary font-semibold text-sm">
                     {projects[(currentIndex - 1 + projects.length) % projects.length].price}
                   </p>
                   <p className="text-gray-600 text-xs">
@@ -133,7 +133,7 @@ export default function HousingTopPicks() {
                       {projects[(currentIndex - 1 + projects.length) % projects.length].specialOffer}
                     </div>
                   )}
-                  <button className="w-full bg-brand-red text-white py-1.5 px-3 rounded-lg font-semibold hover:bg-brand-red-dark transition mt-2 text-sm">
+                  <button className="w-full bg-brand-secondary text-white py-1.5 px-3 rounded-lg font-semibold hover:bg-brand-secondary-dark transition mt-2 text-sm">
                     Contact
                   </button>
                 </div>
@@ -176,7 +176,7 @@ export default function HousingTopPicks() {
 
             {/* Right Project Card */}
             <div className="lg:col-span-3 relative">
-              <div className="bg-brand-red/10 rounded-2xl p-4 shadow-lg h-full relative">
+              <div className="bg-brand-secondary/10 rounded-2xl p-4 shadow-lg h-full relative">
                 {/* Navigation Arrow - Right */}
                 <button
                   onClick={nextSlide}
@@ -200,7 +200,7 @@ export default function HousingTopPicks() {
                   <h3 className="font-bold text-gray-900 text-sm leading-tight">
                     {projects[(currentIndex + 1) % projects.length].developerName}
                   </h3>
-                  <a href="#" className="text-brand-teal text-xs font-medium hover:underline">
+                  <a href="#" className="text-brand-primary text-xs font-medium hover:underline">
                     View Projects
                   </a>
                 </div>
@@ -213,7 +213,7 @@ export default function HousingTopPicks() {
                   <p className="text-gray-600 text-xs">
                     {projects[(currentIndex + 1) % projects.length].location}
                   </p>
-                  <p className="text-brand-red font-semibold text-sm">
+                  <p className="text-brand-secondary font-semibold text-sm">
                     {projects[(currentIndex + 1) % projects.length].price}
                   </p>
                   <p className="text-gray-600 text-xs">
@@ -227,7 +227,7 @@ export default function HousingTopPicks() {
                       {projects[(currentIndex + 1) % projects.length].specialOffer}
                     </div>
                   )}
-                  <button className="w-full bg-brand-red text-white py-1.5 px-3 rounded-lg font-semibold hover:bg-brand-red-dark transition mt-2 text-sm">
+                  <button className="w-full bg-brand-secondary text-white py-1.5 px-3 rounded-lg font-semibold hover:bg-brand-secondary-dark transition mt-2 text-sm">
                     Contact
                   </button>
                 </div>

@@ -111,7 +111,8 @@ export default function PropertyListings() {
           bathrooms: prop.bathrooms || 0,
           area: prop.area || 0,
           image: prop.images && prop.images.length > 0 ? prop.images[0] : "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&h=600&fit=crop",
-          type: prop.subCategory || prop.type || 'Property'
+          type: prop.subCategory || prop.type || 'Property',
+          locationIds: prop.locationIds || []
         }));
         setDatabaseProperties(formatted);
       }
@@ -122,26 +123,28 @@ export default function PropertyListings() {
     }
   };
 
-  // Merge database properties with demo data (database first, then demo)
-  const allProperties = [
-    ...databaseProperties,
-    ...demoProperties
-  ];
+  // Handle filtering
+  const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const locationId = searchParams.get('locationId');
+
+    if (locationId) {
+      const filtered = databaseProperties.filter((prop: any) =>
+        prop.locationIds && prop.locationIds.includes(locationId)
+      );
+      setFilteredProperties(filtered);
+    } else {
+      setFilteredProperties([...databaseProperties, ...demoProperties]);
+    }
+  }, [databaseProperties, loading]);
+
+  const allProperties = filteredProperties;
 
   return (
     <section className="py-24 bg-white">
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="text-center mb-20">
-          <div className="inline-block px-4 py-2 bg-brand-red/10 rounded-full mb-6">
-            <span className="text-brand-red font-semibold text-sm uppercase tracking-widest">Featured Properties</span>
-          </div>
-          <h2 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
-            Discover Your <span className="gradient-text">Dream Home</span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Explore our handpicked selection of premium properties designed to meet your lifestyle needs
-          </p>
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {loading ? (

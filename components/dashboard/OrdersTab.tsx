@@ -33,7 +33,7 @@ export default function OrdersTab() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const url = statusFilter !== 'all' 
+      const url = statusFilter !== 'all'
         ? `/api/orders?status=${statusFilter}`
         : '/api/orders';
       const response = await fetch(url);
@@ -107,7 +107,7 @@ export default function OrdersTab() {
         </div>
         <div className="bg-green-50 rounded-xl p-6 shadow-sm border border-gray-200">
           <div className="text-sm font-medium text-gray-600">Delivered</div>
-          <div className="text-3xl font-bold text-green-600 mt-2">{stats.delivered}</div>
+          <div className="text-3xl font-bold text-brand-primary mt-2">{stats.delivered}</div>
         </div>
       </div>
 
@@ -120,14 +120,14 @@ export default function OrdersTab() {
               placeholder="Search by order number, customer name, or email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
             />
           </div>
           <div className="md:w-48">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
             >
               <option value="all">All Statuses</option>
               <option value="pending">Pending</option>
@@ -211,7 +211,7 @@ export default function OrdersTab() {
                           // TODO: Open order details modal
                           alert('Order details coming soon');
                         }}
-                        className="text-brand-red hover:text-brand-red-dark"
+                        className="text-brand-primary hover:text-brand-primary-light"
                       >
                         View
                       </button>

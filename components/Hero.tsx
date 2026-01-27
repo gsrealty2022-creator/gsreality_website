@@ -1,235 +1,292 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 
 export default function Hero() {
-  const [selectedArea, setSelectedArea] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('');
-  const [selectedType, setSelectedType] = useState('');
+  const [propertyType, setPropertyType] = useState('all');
+  const [keyword, setKeyword] = useState('');
+  const [location, setLocation] = useState('');
+  const [propertyTypeFilter, setPropertyTypeFilter] = useState('');
+  const [beds, setBeds] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Real Image Content - Same image for all banners
-  const RealImageContent = () => (
-    <div className="relative hidden lg:block">
-      <div className="relative w-full h-[500px] rounded-2xl overflow-hidden house-image-container">
-        <Image
-          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Modern Real Estate Property"
-          fill
-          className="object-cover rounded-2xl"
-        />
-      </div>
-    </div>
-  );
-
-  // Text Content Components with different slogans for each banner
-  const TextContent1 = () => (
-    <div className="relative z-10">
-      <h1 className="text-5xl md:text-6xl font-bold text-navy-blue mb-6 leading-tight hero-text-animate">
-        Find Your Dream House By Us
-      </h1>
-      <p className="text-gray-600 mb-8 text-lg leading-relaxed hero-text-delay-1">
-        Discover premium properties that match your lifestyle. Your perfect home is just a click away with FD MAKAN.
-      </p>
-      <div className="flex items-center space-x-4 mb-12 hero-text-delay-2">
-        <button className="bg-brand-red text-white px-8 py-4 rounded-lg font-semibold hover:bg-brand-red-dark transition shadow-lg">
-          Make An Enquiry
-        </button>
-        <button className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition">
-          <svg className="w-6 h-6 text-brand-red" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M8 5v14l11-7z"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-  );
-
-  // Single banner - Banner 1 only (slider functionality ready for more banners later)
-  const banners = [
-    // Banner 1: Text Left, Image Right
-    <div key="banner1" className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center px-4" style={{ width: '100%' }}>
-      <TextContent1 />
-      <RealImageContent />
-    </div>
-  ];
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle search logic here
+    console.log('Search:', { propertyType, keyword, location, propertyTypeFilter, beds });
+  };
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => {
-      const next = (prev + 1) % banners.length;
-      return next;
-    });
+    setCurrentSlide((prev) => (prev + 1) % 3);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => {
-      const next = (prev - 1 + banners.length) % banners.length;
-      return next;
-    });
+    setCurrentSlide((prev) => (prev - 1 + 3) % 3);
   };
 
-  // Auto-play slider - changes slide every 5 seconds (only if more than 1 banner)
-  useEffect(() => {
-    if (banners.length > 1) {
-      const interval = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % banners.length);
-      }, 5000);
-
-      return () => clearInterval(interval);
-    }
-  }, [banners.length]);
-
   return (
-    <section className="bg-gray-50 relative overflow-hidden pb-12">
-      {/* Background Layer */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 opacity-50"></div>
-      
-      <div className="container mx-auto px-4 py-12 relative z-10">
-        <div className="relative">
-          {/* Floating Banner Container */}
-          <div className="relative bg-white bg-opacity-90 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-12 mx-auto max-w-7xl">
-            {/* Slider Container Inside Banner */}
-            <div className="relative overflow-hidden w-full" style={{ minHeight: '500px' }}>
-              <div 
-                className="flex"
-                style={{ 
-                  transform: `translateX(-${currentSlide * 100}%)`,
-                  transition: 'transform 0.7s ease-in-out',
-                  width: `${banners.length * 100}%`
-                }}
-              >
-                {banners.map((banner, index) => (
-                  <div 
-                    key={`banner-${index}`}
-                    className="flex-shrink-0"
-                    style={{ 
-                      width: `${100 / banners.length}%`,
-                      flexBasis: `${100 / banners.length}%`
-                    }}
-                  >
-                    {banner}
-                  </div>
-                ))}
+    <section className="relative w-full h-[90vh] min-h-[700px] overflow-hidden">
+      {/* White Banner Area Below Navbar */}
+      <div className="absolute top-0 left-0 right-0 bg-white z-10 h-32 md:h-40 flex items-center">
+        <div className="container mx-auto px-4 w-full">
+          {/* Main Heading */}
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight inline-block">
+            Find Your Sweet Home
+          </h1>
+        </div>
+      </div>
+
+      {/* Background Image with Carousel */}
+      <div className="absolute inset-0">
+        <div 
+          className="relative w-full h-full transition-transform duration-700 ease-in-out"
+          style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+        >
+          <div className="absolute inset-0 flex">
+            <div className="min-w-full h-full relative overflow-hidden">
+              <div className="absolute inset-0" style={{ transform: 'translateY(15%)' }}>
+                <Image
+                  src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  alt="Modern Real Estate Property"
+                  fill
+                  className="object-cover"
+                  style={{ objectPosition: 'center bottom' }}
+                  priority
+                />
               </div>
+              {/* Dark overlay for better text readability */}
+              <div className="absolute inset-0 bg-black/30"></div>
             </div>
-
-            {/* Navigation Arrows - Inside Banner (only show if more than 1 banner) */}
-            {banners.length > 1 && (
-              <>
-                <button 
-                  onClick={prevSlide}
-                  type="button"
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 w-14 h-14 bg-white bg-opacity-80 rounded-full shadow-xl flex items-center justify-center hover:bg-opacity-100 transition z-30 hover:scale-110 cursor-pointer"
-                  aria-label="Previous slide"
-                >
-                  <svg className="w-6 h-6 text-navy-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <button 
-                  onClick={nextSlide}
-                  type="button"
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 w-14 h-14 bg-white bg-opacity-80 rounded-full shadow-xl flex items-center justify-center hover:bg-opacity-100 transition z-30 hover:scale-110 cursor-pointer"
-                  aria-label="Next slide"
-                >
-                  <svg className="w-6 h-6 text-navy-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-
-                {/* Slide Indicators - Inside Banner */}
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-30">
-                  {banners.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentSlide(index)}
-                      type="button"
-                      className={`h-3 rounded-full transition-all cursor-pointer ${
-                        currentSlide === index 
-                          ? 'bg-brand-red w-8' 
-                          : 'bg-gray-300 hover:bg-gray-400 w-3'
-                      }`}
-                      aria-label={`Go to slide ${index + 1}`}
-                    />
-                  ))}
-                </div>
-              </>
-            )}
+            <div className="min-w-full h-full relative overflow-hidden">
+              <div className="absolute inset-0" style={{ transform: 'translateY(15%)' }}>
+                <Image
+                  src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2070&auto=format&fit=crop"
+                  alt="Modern Real Estate Property"
+                  fill
+                  className="object-cover"
+                  style={{ objectPosition: 'center bottom' }}
+                />
+              </div>
+              <div className="absolute inset-0 bg-black/30"></div>
+            </div>
+            <div className="min-w-full h-full relative overflow-hidden">
+              <div className="absolute inset-0" style={{ transform: 'translateY(15%)' }}>
+                <Image
+                  src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2070&auto=format&fit=crop"
+                  alt="Modern Real Estate Property"
+                  fill
+                  className="object-cover"
+                  style={{ objectPosition: 'center bottom' }}
+                />
+              </div>
+              <div className="absolute inset-0 bg-black/30"></div>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Search/Filter Bar - Positioned at bottom of hero section */}
-        <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-[calc(100%-1rem)] max-w-[95%] z-30">
-          <div className="bg-gradient-to-r from-brand-red to-brand-red-dark rounded-2xl shadow-2xl p-8 mx-4 border-4 border-white/20 backdrop-blur-sm">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="relative">
-                <label className="text-sm font-semibold text-white mb-3 flex items-center">
-                  <svg className="w-5 h-5 mr-2 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  Choose Area
-                </label>
-                <select
-                  value={selectedArea}
-                  onChange={(e) => setSelectedArea(e.target.value)}
-                  className="w-full px-4 py-4 border-2 border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-white focus:border-white text-gray-900 appearance-none bg-white font-medium shadow-lg hover:shadow-xl transition-all"
-                >
-                  <option value="">Select Area</option>
-                  <option value="downtown">Downtown</option>
-                  <option value="suburbs">Suburbs</option>
-                  <option value="riverside">Riverside</option>
-                  <option value="coastal">Coastal</option>
-                </select>
+      {/* Carousel Navigation Arrows */}
+      <button
+        onClick={prevSlide}
+        className="absolute left-6 top-1/2 transform -translate-y-1/2 z-30 w-12 h-12 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-all shadow-lg hover:scale-110"
+        aria-label="Previous slide"
+      >
+        <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <button
+        onClick={nextSlide}
+        className="absolute right-6 top-1/2 transform -translate-y-1/2 z-30 w-12 h-12 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-all shadow-lg hover:scale-110"
+        aria-label="Next slide"
+      >
+        <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      {/* Content Overlay */}
+      <div className="relative z-20 container mx-auto px-4 h-full flex items-start pt-32 md:pt-40">
+        <div className="w-full">
+
+          {/* Search Form Card - Left-aligned, wider */}
+          <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 relative max-w-3xl w-full">
+            <form onSubmit={handleSearch} className="space-y-3">
+              {/* Top Row: Keyword Input + Toggle Buttons */}
+              <div className="flex flex-col md:flex-row gap-2">
+                {/* Keyword Input - Left Side */}
+                <div className="flex-1 relative">
+                  <div className="absolute left-2.5 top-1/2 transform -translate-y-1/2 z-10">
+                    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                    placeholder="Keyword"
+                    className="w-full pl-9 pr-2.5 py-2 text-xs border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary text-gray-900"
+                  />
+                </div>
+
+                {/* Vertical Separator */}
+                <div className="hidden md:block w-px bg-gray-200 self-stretch"></div>
+
+                {/* Toggle Buttons - Right Side (Segmented) */}
+                <div className="flex gap-0 bg-gray-100 rounded-md p-0.5 border border-gray-200 overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setPropertyType('all')}
+                    className={`px-3 py-1.5 text-xs font-semibold transition-all whitespace-nowrap ${
+                      propertyType === 'all'
+                        ? 'bg-brand-primary text-white shadow-sm rounded-l-sm'
+                        : 'text-gray-700 hover:text-gray-900 rounded-l-sm'
+                    }`}
+                  >
+                    All
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPropertyType('rent')}
+                    className={`px-3 py-1.5 text-xs font-semibold transition-all whitespace-nowrap ${
+                      propertyType === 'rent'
+                        ? 'bg-brand-primary text-white shadow-sm'
+                        : 'text-gray-700 hover:text-gray-900'
+                    }`}
+                  >
+                    For Rent
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPropertyType('sale')}
+                    className={`px-3 py-1.5 text-xs font-semibold transition-all whitespace-nowrap ${
+                      propertyType === 'sale'
+                        ? 'bg-brand-primary text-white shadow-sm rounded-r-sm'
+                        : 'text-gray-700 hover:text-gray-900 rounded-r-sm'
+                    }`}
+                  >
+                    For Sale
+                  </button>
+                </div>
               </div>
-              <div className="relative">
-                <label className="text-sm font-semibold text-white mb-3 flex items-center">
-                  <svg className="w-5 h-5 mr-2 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Property Status
-                </label>
-                <select
-                  value={selectedStatus}
-                  onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="w-full px-4 py-4 border-2 border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-white focus:border-white text-gray-900 appearance-none bg-white font-medium shadow-lg hover:shadow-xl transition-all"
-                >
-                  <option value="">Select Status</option>
-                  <option value="for-sale">For Sale</option>
-                  <option value="for-rent">For Rent</option>
-                  <option value="sold">Sold</option>
-                </select>
+
+              {/* Middle Row: Three Dropdowns */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                {/* Location Dropdown */}
+                <div className="relative">
+                  <select
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="w-full px-2.5 py-2 text-xs border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary text-gray-900 appearance-none bg-white pr-7"
+                    style={{ backgroundImage: 'none' }}
+                  >
+                    <option value="">All Main Locations</option>
+                    <option value="downtown">Downtown</option>
+                    <option value="suburbs">Suburbs</option>
+                    <option value="riverside">Riverside</option>
+                    <option value="coastal">Coastal</option>
+                  </select>
+                  <div className="absolute right-2.5 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Type Dropdown */}
+                <div className="relative">
+                  <select
+                    value={propertyTypeFilter}
+                    onChange={(e) => setPropertyTypeFilter(e.target.value)}
+                    className="w-full px-2.5 py-2 text-xs border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary text-gray-900 appearance-none bg-white pr-7"
+                    style={{ backgroundImage: 'none' }}
+                  >
+                    <option value="">All Types</option>
+                    <option value="house">House</option>
+                    <option value="apartment">Apartment</option>
+                    <option value="villa">Villa</option>
+                    <option value="condo">Condo</option>
+                  </select>
+                  <div className="absolute right-2.5 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Beds Dropdown */}
+                <div className="relative">
+                  <select
+                    value={beds}
+                    onChange={(e) => setBeds(e.target.value)}
+                    className="w-full px-2.5 py-2 text-xs border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary text-gray-900 appearance-none bg-white pr-7"
+                    style={{ backgroundImage: 'none' }}
+                  >
+                    <option value="">All Beds</option>
+                    <option value="1">1 Bed</option>
+                    <option value="2">2 Beds</option>
+                    <option value="3">3 Beds</option>
+                    <option value="4">4+ Beds</option>
+                  </select>
+                  <div className="absolute right-2.5 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
               </div>
-              <div className="relative">
-                <label className="text-sm font-semibold text-white mb-3 flex items-center">
-                  <svg className="w-5 h-5 mr-2 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
-                  Property Type
-                </label>
-                <select
-                  value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value)}
-                  className="w-full px-4 py-4 border-2 border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-white focus:border-white text-gray-900 appearance-none bg-white font-medium shadow-lg hover:shadow-xl transition-all"
+
+              {/* Bottom Row: Action Buttons */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 pt-1">
+                {/* Advance Search Button - Left */}
+                <button
+                  type="button"
+                  className="flex items-center justify-center border border-blue-400 bg-white text-blue-500 px-3 py-1.5 rounded-md text-xs font-semibold hover:bg-blue-50 transition whitespace-nowrap"
                 >
-                  <option value="">Select Type</option>
-                  <option value="house">House</option>
-                  <option value="apartment">Apartment</option>
-                  <option value="villa">Villa</option>
-                  <option value="condo">Condo</option>
-                </select>
-              </div>
-              <div className="flex items-end">
-                <button className="w-full bg-white text-brand-red px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-50 transition-all shadow-2xl hover:shadow-3xl transform hover:scale-105 uppercase tracking-wide flex items-center justify-center">
-                  <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
-                  FIND NOW
+                  <span>Advance Search</span>
+                  <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                </button>
+
+                {/* Search Button - Right */}
+                <button
+                  type="submit"
+                  className="bg-brand-primary text-white px-5 py-2 rounded-md text-xs font-bold hover:bg-brand-primary-dark transition shadow-md hover:shadow-lg whitespace-nowrap"
+                >
+                  Search
                 </button>
               </div>
-            </div>
+            </form>
           </div>
+
+          {/* Bottom Button: Looking for certain features - Left-aligned */}
+          <button className="mt-3 bg-brand-primary text-white px-4 py-2 rounded-md text-xs font-semibold flex items-center gap-1.5 hover:bg-brand-primary-dark transition shadow-md w-full max-w-3xl">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            <span>Looking for certain features</span>
+          </button>
         </div>
+      </div>
+
+      {/* Slide Indicators */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-2">
+        {[0, 1, 2].map((index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSlide(index)}
+            className={`h-2 rounded-full transition-all ${
+              currentSlide === index ? 'bg-white w-8' : 'bg-white/50 w-2'
+            }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
       </div>
     </section>
   );

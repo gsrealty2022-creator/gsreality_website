@@ -8,6 +8,8 @@ import OrdersTab from '@/components/dashboard/OrdersTab';
 import DevelopersTab from '@/components/dashboard/DevelopersTab';
 import BlogsTab from '@/components/dashboard/BlogsTab';
 import CustomersTab from '@/components/dashboard/CustomersTab';
+import LocationManager from '@/components/dashboard/LocationManager';
+
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('analytics');
@@ -22,6 +24,8 @@ export default function DashboardPage() {
         return <OrdersTab />;
       case 'developers':
         return <DevelopersTab />;
+      case 'locations':
+        return <LocationManager />;
       case 'blogs':
         return <BlogsTab />;
       case 'customers':

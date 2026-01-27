@@ -22,9 +22,8 @@ export default function FeaturedDevelopers() {
       id: 1,
       name: "Regency Group",
       logo: (
-        <div className="w-full h-24 bg-red-900 rounded-lg flex flex-col items-center justify-center p-4">
-          <div className="text-white font-bold text-sm">REGENCY GROUP</div>
-          <div className="text-white text-xs mt-1">Making People, Building Trust</div>
+        <div className="w-full h-24 flex items-center justify-center p-4">
+          <div className="text-red-900 font-bold text-lg">REGENCY GROUP</div>
         </div>
       )
     },
@@ -32,10 +31,9 @@ export default function FeaturedDevelopers() {
       id: 2,
       name: "Risland",
       logo: (
-        <div className="w-full h-24 bg-white border-2 border-gray-200 rounded-lg flex items-center justify-center p-4">
+        <div className="w-full h-24 flex items-center justify-center p-4">
           <div className="text-center">
-            <div className="text-blue-600 font-bold text-lg">RISLAND</div>
-            <div className="text-yellow-500 text-xs mt-1">☀</div>
+            <div className="text-blue-600 font-bold text-xl">RISLAND</div>
           </div>
         </div>
       )
@@ -44,10 +42,10 @@ export default function FeaturedDevelopers() {
       id: 3,
       name: "Runwal",
       logo: (
-        <div className="w-full h-24 bg-white border-2 border-gray-200 rounded-lg flex flex-col items-center justify-center p-4">
-          <div className="text-yellow-600 font-bold text-2xl mb-1">R</div>
-          <div className="text-yellow-600 font-semibold text-sm">RUNWAL</div>
-          <div className="text-gray-500 text-xs">With you, always...</div>
+        <div className="w-full h-24 flex items-center justify-center p-4">
+          <div className="flex flex-col items-center">
+            <div className="text-yellow-600 font-bold text-2xl">RUNWAL</div>
+          </div>
         </div>
       )
     },
@@ -55,12 +53,10 @@ export default function FeaturedDevelopers() {
       id: 4,
       name: "Ruparel Realty",
       logo: (
-        <div className="w-full h-24 bg-white border-2 border-gray-200 rounded-lg flex items-center justify-center p-4">
+        <div className="w-full h-24 flex items-center justify-center p-4">
           <div className="text-center">
-            <div className="text-red-600 font-bold text-2xl mb-1">R</div>
-            <div className="text-black font-bold text-sm">RUPAREL</div>
-            <div className="text-gray-600 text-xs">REALTY</div>
-            <div className="text-orange-500 text-xs mt-1">LIVE ICONIC</div>
+            <div className="text-brand-secondary font-bold text-2xl inline-block mr-1">R</div>
+            <span className="text-black font-bold text-lg">RUPAREL</span>
           </div>
         </div>
       )
@@ -69,9 +65,8 @@ export default function FeaturedDevelopers() {
       id: 5,
       name: "Rustomjee",
       logo: (
-        <div className="w-full h-24 bg-white border-2 border-gray-200 rounded-lg flex flex-col items-center justify-center p-4">
-          <div className="text-gray-400 text-xs mb-1">IT'S THOUGHTFUL. IT'S</div>
-          <div className="text-black font-bold text-lg">Rustomjee®</div>
+        <div className="w-full h-24 flex items-center justify-center p-4">
+          <div className="text-black font-bold text-xl">Rustomjee®</div>
         </div>
       )
     },
@@ -79,9 +74,8 @@ export default function FeaturedDevelopers() {
       id: 6,
       name: "Sheth",
       logo: (
-        <div className="w-full h-24 bg-white border-2 border-gray-200 rounded-lg flex flex-col items-center justify-center p-4">
-          <div className="text-orange-500 font-bold text-xl">sheth</div>
-          <div className="text-black text-xs mt-1">ASHWIN SHETH GROUP</div>
+        <div className="w-full h-24 flex items-center justify-center p-4">
+          <div className="text-brand-secondary font-bold text-2xl">sheth</div>
         </div>
       )
     },
@@ -89,8 +83,8 @@ export default function FeaturedDevelopers() {
       id: 7,
       name: "Developer 7",
       logo: (
-        <div className="w-full h-24 bg-white border-2 border-gray-200 rounded-lg flex items-center justify-center p-4">
-          <div className="text-red-600 font-bold text-lg">Developer</div>
+        <div className="w-full h-24 flex items-center justify-center p-4">
+          <div className="text-brand-secondary font-bold text-lg">Developer</div>
         </div>
       )
     }
@@ -112,12 +106,12 @@ export default function FeaturedDevelopers() {
           name: dev.name,
           isDatabase: true,
           logo: dev.logo ? (
-            <div className="w-full h-24 bg-white border-2 border-gray-200 rounded-lg flex items-center justify-center p-4">
+            <div className="w-full h-24 flex items-center justify-center p-4">
               <img src={dev.logo} alt={dev.name} className="max-w-full max-h-full object-contain" />
             </div>
           ) : (
-            <div className="w-full h-24 bg-gradient-to-br from-brand-teal to-brand-red rounded-lg flex items-center justify-center p-4">
-              <div className="text-white font-bold text-sm">{dev.name.toUpperCase()}</div>
+            <div className="w-full h-24 flex items-center justify-center p-4">
+              <div className="text-gray-800 font-bold text-lg">{dev.name.toUpperCase()}</div>
             </div>
           )
         }));
@@ -153,12 +147,12 @@ export default function FeaturedDevelopers() {
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Heading */}
         <div className="mb-8">
-          <h2 className="text-4xl md:text-5xl font-bold flex items-center">
+          <h2 className="text-3xl md:text-4xl font-bold flex items-center">
             <span className="text-gray-400 relative inline-block">
-              Featured
-              <span className="absolute bottom-0 left-0 w-full h-1 bg-orange-500"></span>
+              Partners with
+              <span className="absolute bottom-0 left-0 w-full h-1 bg-brand-secondary"></span>
             </span>
-            <span className="text-gray-900 ml-4">Developers</span>
+            <span className="text-gray-900 ml-4">GS Reality</span>
           </h2>
         </div>
 

@@ -14,7 +14,7 @@ export default function CustomersTab() {
         <p className="text-gray-600 mb-6">
           Customer management features are coming soon. This section will allow you to view and manage customer information, contact details, and enquiry history.
         </p>
-        <div className="inline-block bg-brand-teal/10 text-brand-teal px-4 py-2 rounded-lg text-sm font-medium">
+        <div className="inline-block bg-brand-primary/10 text-brand-primary px-4 py-2 rounded-lg text-sm font-medium">
           Coming Soon
         </div>
       </div>

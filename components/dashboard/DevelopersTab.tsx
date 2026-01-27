@@ -91,7 +91,7 @@ export default function DevelopersTab() {
         </div>
         <button
           onClick={handleAddDeveloper}
-          className="bg-brand-red text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-red-dark transition shadow-lg"
+          className="bg-brand-secondary text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-secondary-dark transition shadow-lg"
         >
           + Add Developer
         </button>
@@ -104,7 +104,7 @@ export default function DevelopersTab() {
           <p className="text-gray-600 mb-6">Get started by adding your first developer</p>
           <button
             onClick={handleAddDeveloper}
-            className="bg-brand-red text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-red-dark transition"
+            className="bg-brand-secondary text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-secondary-dark transition"
           >
             Add Your First Developer
           </button>
@@ -125,7 +125,7 @@ export default function DevelopersTab() {
                   />
                 </div>
               ) : (
-                <div className="w-full h-32 bg-gradient-to-br from-brand-teal to-brand-red rounded-lg mb-4 flex items-center justify-center">
+                <div className="w-full h-32 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-lg mb-4 flex items-center justify-center">
                   <span className="text-white font-bold text-lg">{developer.name.charAt(0).toUpperCase()}</span>
                 </div>
               )}
@@ -135,7 +135,7 @@ export default function DevelopersTab() {
                   {[1, 2, 3, 4, 5].map((star) => (
                     <svg
                       key={star}
-                      className={`w-4 h-4 ${star <= developer.rating ? 'text-orange-400' : 'text-gray-300'}`}
+                      className={`w-4 h-4 ${star <= (developer.rating || 0) ? 'text-brand-secondary' : 'text-gray-300'}`}
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -157,7 +157,7 @@ export default function DevelopersTab() {
                   href={developer.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-brand-teal hover:text-brand-teal-dark"
+                  className="text-sm text-brand-primary hover:text-brand-primary-dark"
                 >
                   Visit Website →
                 </a>
@@ -172,7 +172,7 @@ export default function DevelopersTab() {
                 <span className="text-gray-300">|</span>
                 <button
                   onClick={() => handleDeleteDeveloper(developer._id)}
-                  className="text-red-600 hover:text-red-800 text-sm"
+                  className="text-brand-secondary hover:text-red-800 text-sm"
                 >
                   Delete
                 </button>
@@ -282,7 +282,7 @@ function DeveloperFormModal({
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="e.g., Godrej Properties, Lodha Group"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
             />
           </div>
 
@@ -295,7 +295,7 @@ function DeveloperFormModal({
               value={formData.logo}
               onChange={(e) => setFormData({ ...formData, logo: e.target.value })}
               placeholder="https://example.com/logo.png"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
             />
             {formData.logo && (
               <div className="mt-2">
@@ -322,7 +322,7 @@ function DeveloperFormModal({
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Brief description about the developer"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
             />
           </div>
 
@@ -335,7 +335,7 @@ function DeveloperFormModal({
               value={formData.website}
               onChange={(e) => setFormData({ ...formData, website: e.target.value })}
               placeholder="https://example.com"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
             />
           </div>
 
@@ -351,7 +351,7 @@ function DeveloperFormModal({
                 placeholder="e.g., 2007"
                 min="1900"
                 max={new Date().getFullYear()}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
               />
             </div>
             <div>
@@ -364,7 +364,7 @@ function DeveloperFormModal({
                 onChange={(e) => setFormData({ ...formData, totalProjects: e.target.value ? parseInt(e.target.value) : '' })}
                 placeholder="e.g., 23"
                 min="0"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
               />
             </div>
           </div>
@@ -380,13 +380,13 @@ function DeveloperFormModal({
                 onChange={(e) => setFormData({ ...formData, rating: Math.min(5, Math.max(1, parseInt(e.target.value) || 5)) })}
                 min="1"
                 max="5"
-                className="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                className="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
               />
               <div className="flex items-center">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <svg
                     key={star}
-                    className={`w-5 h-5 ${star <= formData.rating ? 'text-orange-400' : 'text-gray-300'}`}
+                    className={`w-5 h-5 ${star <= formData.rating ? 'text-brand-secondary' : 'text-gray-300'}`}
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -409,7 +409,7 @@ function DeveloperFormModal({
             <button
               type="submit"
               disabled={submitting}
-              className="px-6 py-2 bg-brand-red text-white rounded-lg font-semibold hover:bg-brand-red-dark disabled:opacity-50"
+              className="px-6 py-2 bg-brand-primary text-white rounded-lg font-semibold hover:bg-brand-primary-light disabled:opacity-50"
             >
               {submitting ? 'Saving...' : developer ? 'Update Developer' : 'Add Developer'}
             </button>

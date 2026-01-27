@@ -11,15 +11,15 @@ export default function AboutSection() {
             <div className="absolute -top-4 -left-4 z-0">
               <div className="flex flex-col gap-2">
                 <div className="flex gap-2">
-                  <div className="w-2 h-2 bg-brand-teal rounded-full opacity-60"></div>
-                  <div className="w-2 h-2 bg-brand-teal rounded-full opacity-60"></div>
-                  <div className="w-2 h-2 bg-brand-teal rounded-full opacity-60"></div>
+                  <div className="w-2 h-2 bg-brand-primary rounded-full opacity-60"></div>
+                  <div className="w-2 h-2 bg-brand-primary rounded-full opacity-60"></div>
+                  <div className="w-2 h-2 bg-brand-primary rounded-full opacity-60"></div>
                 </div>
                 <div className="flex gap-2">
-                  <div className="w-2 h-2 bg-brand-teal rounded-full opacity-60"></div>
+                  <div className="w-2 h-2 bg-brand-primary rounded-full opacity-60"></div>
                 </div>
                 <div className="flex gap-2">
-                  <div className="w-2 h-2 bg-brand-teal rounded-full opacity-60"></div>
+                  <div className="w-2 h-2 bg-brand-primary rounded-full opacity-60"></div>
                 </div>
               </div>
             </div>
@@ -42,14 +42,18 @@ export default function AboutSection() {
           <div className="space-y-6">
             {/* About Us Label */}
             <div className="inline-block">
-              <span className="bg-brand-red text-white px-4 py-2 rounded-lg text-sm font-semibold uppercase tracking-wide">
+              <span className="bg-brand-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold uppercase tracking-wide">
                 About Us
               </span>
             </div>
 
             {/* Main Heading */}
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
-              The Leading Real Estate Rental Marketplace<span className="text-brand-red">.</span>
+            <h2 className="text-3xl md:text-4xl font-bold leading-tight flex flex-wrap items-center">
+              <span className="text-gray-400 relative inline-block mr-3 mb-2 md:mb-0">
+                The Leading
+                <span className="absolute bottom-0 left-0 w-full h-1 bg-brand-secondary"></span>
+              </span>
+              <span className="text-gray-900">Real Estate Rental Marketplace.</span>
             </h2>
 
             {/* Description */}
@@ -61,8 +65,8 @@ export default function AboutSection() {
             <div className="grid grid-cols-2 gap-6 py-6">
               {/* Feature 1 */}
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-12 h-12 bg-brand-teal/10 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-brand-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex-shrink-0 w-12 h-12 bg-brand-primary/10 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                   </svg>
                 </div>
@@ -73,8 +77,8 @@ export default function AboutSection() {
 
               {/* Feature 2 */}
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-12 h-12 bg-brand-teal/10 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-brand-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex-shrink-0 w-12 h-12 bg-brand-primary/10 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                   </svg>
                 </div>
@@ -85,8 +89,8 @@ export default function AboutSection() {
 
               {/* Feature 3 */}
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-12 h-12 bg-brand-teal/10 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-brand-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex-shrink-0 w-12 h-12 bg-brand-primary/10 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
                 </div>
@@ -97,8 +101,8 @@ export default function AboutSection() {
 
               {/* Feature 4 */}
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-12 h-12 bg-brand-teal/10 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-brand-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex-shrink-0 w-12 h-12 bg-brand-primary/10 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                 </div>
@@ -109,7 +113,7 @@ export default function AboutSection() {
             </div>
 
             {/* Quote/Testimonial Box */}
-            <div className="bg-brand-red/10 rounded-xl p-6 border-l-4 border-brand-red">
+            <div className="bg-brand-secondary/10 rounded-xl p-6 border-l-4 border-brand-secondary">
               <p className="text-gray-700 italic leading-relaxed">
                 "Enimad minim veniam quis nostrud exercitation llamco laboris. Lorem ipsum dolor sit amet"
               </p>
@@ -117,65 +121,13 @@ export default function AboutSection() {
 
             {/* CTA Button */}
             <div className="pt-4">
-              <button className="bg-gradient-to-r from-brand-red to-brand-red-dark hover:from-brand-red-dark hover:to-brand-red text-white font-semibold px-8 py-4 rounded-lg transition shadow-lg uppercase tracking-wide">
+              <button className="bg-gradient-to-r from-brand-secondary to-brand-secondary-dark hover:from-brand-secondary-dark hover:to-brand-secondary text-white font-semibold px-8 py-4 rounded-lg transition shadow-lg uppercase tracking-wide">
                 Our Services
               </button>
             </div>
           </div>
         </div>
 
-        {/* Excellence Cards Section */}
-        <div className="mt-24">
-          <div className="text-center mb-12">
-            <div className="inline-block px-4 py-2 bg-brand-red/10 rounded-full mb-6">
-              <span className="text-brand-red font-semibold text-sm uppercase tracking-widest">Why Choose Us</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
-              Excellence in Every <span className="gradient-text">Transaction</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Experience the difference of working with a team that truly understands real estate
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-10 rounded-2xl shadow-custom-medium border border-lightGray hover:shadow-custom-heavy transition-all duration-300 transform hover:-translate-y-2 group">
-              <div className="w-20 h-20 bg-gradient-to-br from-brand-red to-brand-red-dark rounded-2xl flex items-center justify-center mb-8 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Trusted & Reliable</h3>
-              <p className="text-gray-600 leading-relaxed text-lg">
-                Years of experience in the real estate market with a proven track record of successful transactions and satisfied clients.
-              </p>
-            </div>
-            
-            <div className="bg-white p-10 rounded-2xl shadow-custom-medium border border-lightGray hover:shadow-custom-heavy transition-all duration-300 transform hover:-translate-y-2 group">
-              <div className="w-20 h-20 bg-gradient-to-br from-brand-red to-brand-red-dark rounded-2xl flex items-center justify-center mb-8 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Fast & Efficient</h3>
-              <p className="text-gray-600 leading-relaxed text-lg">
-                Streamlined processes that help you find or sell your property quickly without compromising on quality or service.
-              </p>
-            </div>
-            
-            <div className="bg-white p-10 rounded-2xl shadow-custom-medium border border-lightGray hover:shadow-custom-heavy transition-all duration-300 transform hover:-translate-y-2 group">
-              <div className="w-20 h-20 bg-gradient-to-br from-brand-red to-brand-red-dark rounded-2xl flex items-center justify-center mb-8 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Expert Team</h3>
-              <p className="text-gray-600 leading-relaxed text-lg">
-                Our professional agents are dedicated to providing personalized service tailored specifically to your unique needs.
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "FD MAKAN - Seal The Deal | Real Estate Excellence",
-  description: "FD MAKAN - Your trusted partner in real estate. Find your dream property, sell with confidence, and seal the deal with our expert team.",
+  title: "GS Reality - Your Trusted Real Estate Partner | Excellence in Property",
+  description: "GS Reality - Your trusted partner in real estate. Find your dream property, sell with confidence, and experience excellence with our expert team.",
 };
 
 export default function RootLayout({

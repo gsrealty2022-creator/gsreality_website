@@ -2,6 +2,7 @@
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function ContactPage() {
@@ -31,16 +32,22 @@ export default function ContactPage() {
   return (
     <main className="min-h-screen">
       <Header />
-      
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-teal-500 to-orange-500 text-white py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">Contact Us</h1>
-            <p className="text-xl text-white/90">
-              Get in touch with our team - we're here to help you seal the deal
-            </p>
-          </div>
+
+      {/* Hero Section with Background Image */}
+      <section className="relative h-[400px] flex items-center justify-center overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1600&h=600&fit=crop')",
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/50 to-black/60"></div>
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 text-center text-white px-4">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4">Contact Us</h1>
         </div>
       </section>
 
@@ -63,7 +70,7 @@ export default function ContactPage() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary"
                     placeholder="John Doe"
                   />
                 </div>
@@ -78,7 +85,7 @@ export default function ContactPage() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary"
                     placeholder="john@example.com"
                   />
                 </div>
@@ -92,7 +99,7 @@ export default function ContactPage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary"
                     placeholder="+1 (555) 123-4567"
                   />
                 </div>
@@ -106,7 +113,7 @@ export default function ContactPage() {
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary"
                   >
                     <option value="">Select a subject</option>
                     <option value="buying">Buying a Property</option>
@@ -127,13 +134,13 @@ export default function ContactPage() {
                     onChange={handleChange}
                     required
                     rows={5}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary"
                     placeholder="Tell us how we can help you..."
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-teal-500 to-orange-500 text-white px-8 py-4 rounded-lg font-bold hover:from-teal-600 hover:to-orange-600 transition shadow-lg hover:shadow-xl"
+                  className="w-full bg-brand-primary text-white px-8 py-4 rounded-lg font-bold hover:bg-brand-primary-light transition shadow-lg hover:shadow-xl"
                 >
                   Send Message
                 </button>
@@ -146,7 +153,7 @@ export default function ContactPage() {
                 <h2 className="text-3xl font-bold text-[#1a365d] mb-6">Get in Touch</h2>
                 <div className="space-y-6">
                   <div className="flex items-start space-x-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center">
+                    <div className="flex-shrink-0 w-12 h-12 bg-brand-primary rounded-full flex items-center justify-center">
                       <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -162,7 +169,7 @@ export default function ContactPage() {
                     </div>
                   </div>
                   <div className="flex items-start space-x-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
+                    <div className="flex-shrink-0 w-12 h-12 bg-brand-secondary rounded-full flex items-center justify-center">
                       <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                       </svg>
@@ -176,7 +183,7 @@ export default function ContactPage() {
                     </div>
                   </div>
                   <div className="flex items-start space-x-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center">
+                    <div className="flex-shrink-0 w-12 h-12 bg-brand-primary rounded-full flex items-center justify-center">
                       <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
@@ -184,15 +191,15 @@ export default function ContactPage() {
                     <div>
                       <h3 className="text-lg font-semibold text-[#1a365d] mb-1">Email</h3>
                       <p className="text-gray-600">
-                        info@fdmakan.com<br />
-                        support@fdmakan.com
+                        info@gsreality.com<br />
+                        support@gsreality.com
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-teal-500 to-orange-500 text-white p-10 rounded-2xl shadow-xl">
+              <div className="bg-gradient-to-r from-brand-secondary via-brand-secondary-light to-white text-gray-800 p-10 rounded-2xl shadow-xl">
                 <h3 className="text-2xl font-bold mb-4">Business Hours</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between">

@@ -33,9 +33,9 @@ export default function CategoriesTab() {
         fetch('/api/categories/main'),
         fetch('/api/categories/sub'),
       ]);
-      
+
       if (!mainRes.ok || !subRes.ok) throw new Error('Failed to fetch categories');
-      
+
       const mainData = await mainRes.json();
       const subData = await subRes.json();
       setMainCategories(mainData);
@@ -69,21 +69,19 @@ export default function CategoriesTab() {
         <nav className="flex space-x-8">
           <button
             onClick={() => setActiveSubTab('main')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeSubTab === 'main'
-                ? 'border-brand-red text-brand-red'
+            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeSubTab === 'main'
+                ? 'border-brand-primary text-brand-primary'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
+              }`}
           >
             Main Categories
           </button>
           <button
             onClick={() => setActiveSubTab('sub')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeSubTab === 'sub'
-                ? 'border-brand-red text-brand-red'
+            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeSubTab === 'sub'
+                ? 'border-brand-primary text-brand-primary'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
+              }`}
           >
             Sub Categories
           </button>
@@ -172,7 +170,7 @@ function MainCategoriesView({
         <p className="text-gray-600">Manage main property categories (e.g., Residential, Commercial)</p>
         <button
           onClick={() => setShowModal(true)}
-          className="bg-brand-red text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-red-dark transition"
+          className="bg-brand-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-primary-light transition"
         >
           + Add Main Category
         </button>
@@ -185,7 +183,7 @@ function MainCategoriesView({
           <p className="text-gray-600 mb-6">Get started by adding your first main category</p>
           <button
             onClick={() => setShowModal(true)}
-            className="bg-brand-red text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-red-dark transition"
+            className="bg-brand-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-primary-light transition"
           >
             Add Your First Category
           </button>
@@ -214,7 +212,7 @@ function MainCategoriesView({
                 <span className="text-gray-300">|</span>
                 <button
                   onClick={() => handleDelete(category._id)}
-                  className="text-red-600 hover:text-red-800 text-sm"
+                  className="text-brand-secondary hover:text-red-800 text-sm"
                 >
                   Delete
                 </button>
@@ -241,7 +239,7 @@ function MainCategoriesView({
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="e.g., Residential, Commercial"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -253,7 +251,7 @@ function MainCategoriesView({
                   value={formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                   placeholder="https://example.com/image.jpg"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
                 {formData.image && (
                   <div className="mt-2">
@@ -282,7 +280,7 @@ function MainCategoriesView({
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-6 py-2 bg-brand-red text-white rounded-lg font-semibold hover:bg-brand-red-dark disabled:opacity-50"
+                  className="px-6 py-2 bg-brand-secondary text-white rounded-lg font-semibold hover:bg-brand-secondary-dark disabled:opacity-50"
                 >
                   {submitting ? 'Creating...' : 'Add Category'}
                 </button>
@@ -310,7 +308,7 @@ function SubCategoriesView({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.mainCategory) {
       alert('Please select a main category');
       return;
@@ -368,7 +366,7 @@ function SubCategoriesView({
         <p className="text-gray-600">Manage property subcategories (e.g., House, Apartment, Villa)</p>
         <button
           onClick={() => setShowModal(true)}
-          className="bg-brand-red text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-red-dark transition"
+          className="bg-brand-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-primary-light transition"
         >
           + Add Sub Category
         </button>
@@ -381,7 +379,7 @@ function SubCategoriesView({
           <p className="text-gray-600 mb-6">Get started by adding your first sub category</p>
           <button
             onClick={() => setShowModal(true)}
-            className="bg-brand-red text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-red-dark transition"
+            className="bg-brand-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-primary-light transition"
           >
             Add Your First Sub Category
           </button>
@@ -411,7 +409,7 @@ function SubCategoriesView({
                 <span className="text-gray-300">|</span>
                 <button
                   onClick={() => handleDelete(category._id)}
-                  className="text-red-600 hover:text-red-800 text-sm"
+                  className="text-brand-secondary hover:text-red-800 text-sm"
                 >
                   Delete
                 </button>
@@ -436,7 +434,7 @@ function SubCategoriesView({
                   required
                   value={formData.mainCategory}
                   onChange={(e) => setFormData({ ...formData, mainCategory: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 >
                   <option value="">Select Main Category</option>
                   {mainCategories.map((cat) => (
@@ -446,7 +444,7 @@ function SubCategoriesView({
                   ))}
                 </select>
                 {mainCategories.length === 0 && (
-                  <p className="text-xs text-red-600 mt-1">
+                  <p className="text-xs text-brand-secondary mt-1">
                     Please add a main category first
                   </p>
                 )}
@@ -461,7 +459,7 @@ function SubCategoriesView({
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="e.g., House, Apartment, Villa"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -473,7 +471,7 @@ function SubCategoriesView({
                   value={formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                   placeholder="https://example.com/image.jpg"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
                 {formData.image && (
                   <div className="mt-2">
@@ -502,7 +500,7 @@ function SubCategoriesView({
                 <button
                   type="submit"
                   disabled={submitting || mainCategories.length === 0}
-                  className="px-6 py-2 bg-brand-red text-white rounded-lg font-semibold hover:bg-brand-red-dark disabled:opacity-50"
+                  className="px-6 py-2 bg-brand-secondary text-white rounded-lg font-semibold hover:bg-brand-secondary-dark disabled:opacity-50"
                 >
                   {submitting ? 'Creating...' : 'Add Sub Category'}
                 </button>

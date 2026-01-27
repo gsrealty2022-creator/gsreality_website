@@ -3,18 +3,16 @@
 import { useEffect } from 'react';
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import FeaturedPropertyCard from "@/components/FeaturedPropertyCard";
 import AboutSection from "@/components/AboutSection";
 import StatsSection from "@/components/StatsSection";
 import TopSellingProjects from "@/components/TopSellingProjects";
-import HousingTopPicks from "@/components/HousingTopPicks";
+import Testimonials from "@/components/Testimonials";
 import PremiumProjects from "@/components/PremiumProjects";
-import NewlyLaunchedProjects from "@/components/NewlyLaunchedProjects";
-import PropertyListings from "@/components/PropertyListings";
 import RecentBlogs from "@/components/RecentBlogs";
 import FeaturedDevelopers from "@/components/FeaturedDevelopers";
+import FindByLocations from "@/components/FindByLocations";
 import Footer from "@/components/Footer";
-import PageNavigation from "@/components/PageNavigation";
-
 export default function Home() {
   useEffect(() => {
     // Add smooth scroll behavior
@@ -27,25 +25,23 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white">
       <Header />
-      <PageNavigation />
       <div id="hero">
         <Hero />
       </div>
-      <div className="lg:pl-[200px]">
+      <FeaturedPropertyCard />
+      <div>
         <div id="top-selling">
           <TopSellingProjects />
         </div>
-        <div id="recent-blogs">
-          <RecentBlogs />
+        <div id="find-by-locations">
+          <FindByLocations />
         </div>
         <div id="premium-projects">
           <PremiumProjects />
         </div>
-        <div id="top-picks">
-          <HousingTopPicks />
-        </div>
-        <div id="newly-launched">
-          <NewlyLaunchedProjects />
+        <Testimonials />
+        <div id="recent-blogs">
+          <RecentBlogs />
         </div>
         <div id="stats">
           <StatsSection />
@@ -55,9 +51,6 @@ export default function Home() {
         </div>
         <div id="featured-developers">
           <FeaturedDevelopers />
-        </div>
-        <div id="properties">
-          <PropertyListings />
         </div>
       </div>
       <div id="footer">

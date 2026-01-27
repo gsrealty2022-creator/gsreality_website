@@ -23,7 +23,12 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'ik.imagekit.io',
       },
+      {
+        protocol: 'https',
+        hostname: 'imgs.search.brave.com',
+      },
     ],
+
   },
 }
 

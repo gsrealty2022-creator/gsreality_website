@@ -13,6 +13,7 @@ interface Property {
   bathrooms?: number;
   area?: number;
   available: boolean;
+  featured?: boolean;
   images: string[];
   videos?: string[];
   showInTopSelling?: boolean;
@@ -43,14 +44,20 @@ interface Property {
     fitting?: { [key: string]: string };
     wallCeiling?: { [key: string]: string };
   };
-  // Connectivity
   connectivity?: {
     commute?: Array<{ name: string; distance: string; time: string }>;
     entertainment?: Array<{ name: string; distance: string; time: string }>;
     essentials?: Array<{ name: string; distance: string; time: string }>;
   };
+  locationIds?: string[];
   createdAt: string;
   updatedAt: string;
+}
+
+interface Location {
+  id: string;
+  name: string;
+  state: string;
 }
 
 interface Developer {
@@ -61,6 +68,7 @@ interface Developer {
 export default function PropertiesTab() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [developers, setDevelopers] = useState<Developer[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
@@ -68,7 +76,20 @@ export default function PropertiesTab() {
   useEffect(() => {
     fetchProperties();
     fetchDevelopers();
+    fetchLocations();
   }, []);
+
+  const fetchLocations = async () => {
+    try {
+      const response = await fetch('/api/locations');
+      if (response.ok) {
+        const data = await response.json();
+        setLocations(data);
+      }
+    } catch (error) {
+      console.error('Error fetching locations:', error);
+    }
+  };
 
   const fetchDevelopers = async () => {
     try {
@@ -145,7 +166,7 @@ export default function PropertiesTab() {
         </div>
         <button
           onClick={handleAddProperty}
-          className="bg-brand-red text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-red-dark transition shadow-lg"
+          className="bg-brand-secondary text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-secondary-dark transition shadow-lg"
         >
           + Add Property
         </button>
@@ -160,7 +181,7 @@ export default function PropertiesTab() {
             <p className="text-gray-600 mb-6">Get started by adding your first property</p>
             <button
               onClick={handleAddProperty}
-              className="bg-brand-red text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-red-dark transition"
+              className="bg-brand-secondary text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-secondary-dark transition"
             >
               Add Your First Property
             </button>
@@ -208,7 +229,7 @@ export default function PropertiesTab() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 py-1 text-xs font-medium bg-brand-teal/10 text-brand-teal rounded-full">
+                      <span className="px-2 py-1 text-xs font-medium bg-brand-primary/10 text-brand-primary rounded-full">
                         {property.developer || 'N/A'}
                       </span>
                     </td>
@@ -233,7 +254,7 @@ export default function PropertiesTab() {
                       <div className="flex items-center space-x-3">
                         <button
                           onClick={() => window.open(`/properties/${property._id}`, '_blank')}
-                          className="text-brand-teal hover:text-brand-teal-dark"
+                          className="text-brand-primary hover:text-brand-primary-dark"
                           title="View"
                         >
                           👁️
@@ -247,7 +268,7 @@ export default function PropertiesTab() {
                         </button>
                         <button
                           onClick={() => handleDeleteProperty(property._id)}
-                          className="text-red-600 hover:text-red-800"
+                          className="text-brand-secondary hover:text-red-800"
                           title="Delete"
                         >
                           🗑️
@@ -267,6 +288,7 @@ export default function PropertiesTab() {
         <PropertyFormModal
           property={editingProperty}
           developers={developers}
+          allLocations={locations}
           onClose={() => {
             setShowModal(false);
             setEditingProperty(null);
@@ -286,11 +308,13 @@ export default function PropertiesTab() {
 function PropertyFormModal({
   property,
   developers,
+  allLocations,
   onClose,
   onSuccess,
 }: {
   property: Property | null;
   developers: Developer[];
+  allLocations: Location[];
   onClose: () => void;
   onSuccess: () => void;
 }) {
@@ -300,6 +324,7 @@ function PropertyFormModal({
     price: property?.price || 0,
     developer: property?.developer || '',
     location: property?.location || '',
+    locationIds: property?.locationIds || [],
     bedrooms: property?.bedrooms || 0,
     bathrooms: property?.bathrooms || 0,
     area: property?.area || 0,
@@ -337,7 +362,7 @@ function PropertyFormModal({
       essentials: [],
     },
   });
-  
+
   // State for managing dynamic inputs
   const [highlightInput, setHighlightInput] = useState('');
   const [amenityInput, setAmenityInput] = useState('');
@@ -351,7 +376,7 @@ function PropertyFormModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Client-side validation
     if (!formData.name.trim()) {
       alert('Please enter a property name');
@@ -395,7 +420,7 @@ function PropertyFormModal({
         ? `/api/properties/${property._id}`
         : '/api/properties';
       const method = property ? 'PUT' : 'POST';
-      
+
       // Extract price from pricing array if price is not set
       let finalPrice = formData.price;
       if ((!finalPrice || finalPrice <= 0) && formData.pricing && formData.pricing.length > 0) {
@@ -406,7 +431,7 @@ function PropertyFormModal({
           finalPrice = numericPrice;
         }
       }
-      
+
       // Prepare data for API
       const submitData = {
         ...formData,
@@ -415,7 +440,7 @@ function PropertyFormModal({
         bathrooms: formData.bathrooms ? parseInt(formData.bathrooms.toString()) : undefined,
         area: formData.area ? parseInt(formData.area.toString()) : undefined,
       };
-      
+
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -471,7 +496,7 @@ function PropertyFormModal({
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -483,7 +508,7 @@ function PropertyFormModal({
                   required
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -494,7 +519,7 @@ function PropertyFormModal({
                   required
                   value={formData.developer}
                   onChange={(e) => setFormData({ ...formData, developer: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 >
                   <option value="">Select Developer</option>
                   {developers.map((dev) => (
@@ -504,7 +529,7 @@ function PropertyFormModal({
                   ))}
                 </select>
                 {developers.length === 0 && (
-                  <p className="text-xs text-red-600 mt-1">
+                  <p className="text-xs text-brand-secondary mt-1">
                     Please add a developer first in the Developers tab
                   </p>
                 )}
@@ -519,7 +544,7 @@ function PropertyFormModal({
                 rows={4}
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
               />
             </div>
           </div>
@@ -535,7 +560,7 @@ function PropertyFormModal({
                   min="0"
                   value={formData.bedrooms}
                   onChange={(e) => setFormData({ ...formData, bedrooms: parseInt(e.target.value) })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -545,7 +570,7 @@ function PropertyFormModal({
                   min="0"
                   value={formData.bathrooms}
                   onChange={(e) => setFormData({ ...formData, bathrooms: parseInt(e.target.value) })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -555,7 +580,7 @@ function PropertyFormModal({
                   min="0"
                   value={formData.area}
                   onChange={(e) => setFormData({ ...formData, area: parseInt(e.target.value) })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
             </div>
@@ -573,7 +598,7 @@ function PropertyFormModal({
                   type="checkbox"
                   checked={formData.showInTopSelling}
                   onChange={(e) => setFormData({ ...formData, showInTopSelling: e.target.checked })}
-                  className="w-4 h-4 text-brand-red border-gray-300 rounded focus:ring-brand-red"
+                  className="w-4 h-4 text-brand-secondary border-gray-300 rounded focus:ring-brand-primary"
                 />
                 <span className="ml-2 text-sm text-gray-700 font-medium">Show in Top Selling Projects</span>
               </label>
@@ -582,7 +607,7 @@ function PropertyFormModal({
                   type="checkbox"
                   checked={formData.showInPremium}
                   onChange={(e) => setFormData({ ...formData, showInPremium: e.target.checked })}
-                  className="w-4 h-4 text-brand-red border-gray-300 rounded focus:ring-brand-red"
+                  className="w-4 h-4 text-brand-secondary border-gray-300 rounded focus:ring-brand-primary"
                 />
                 <span className="ml-2 text-sm text-gray-700 font-medium">Show in Premium Projects</span>
               </label>
@@ -591,11 +616,41 @@ function PropertyFormModal({
                   type="checkbox"
                   checked={formData.showInNewlyLaunched}
                   onChange={(e) => setFormData({ ...formData, showInNewlyLaunched: e.target.checked })}
-                  className="w-4 h-4 text-brand-red border-gray-300 rounded focus:ring-brand-red"
+                  className="w-4 h-4 text-brand-secondary border-gray-300 rounded focus:ring-brand-primary"
                 />
                 <span className="ml-2 text-sm text-gray-700 font-medium">Show in Newly Launched Projects</span>
               </label>
             </div>
+          </div>
+
+          {/* Project Locations */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Project Locations</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Select which location cards this property should appear under.
+            </p>
+            {allLocations.length === 0 ? (
+              <p className="text-sm text-brand-secondary font-medium">Please add locations first in the "Locations" tab.</p>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {allLocations.map((loc) => (
+                  <label key={loc.id} className="flex items-center p-3 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer transition">
+                    <input
+                      type="checkbox"
+                      checked={formData.locationIds.includes(loc.id)}
+                      onChange={(e) => {
+                        const newIds = e.target.checked
+                          ? [...formData.locationIds, loc.id]
+                          : formData.locationIds.filter(id => id !== loc.id);
+                        setFormData({ ...formData, locationIds: newIds });
+                      }}
+                      className="w-4 h-4 text-brand-primary border-gray-300 rounded focus:ring-brand-primary"
+                    />
+                    <span className="ml-3 text-sm text-gray-700 font-medium truncate">{loc.name}</span>
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Highlights Section */}
@@ -608,7 +663,7 @@ function PropertyFormModal({
                   placeholder="Enter highlight point (e.g., Well-appointed 3 BHK apartments)"
                   value={highlightInput}
                   onChange={(e) => setHighlightInput(e.target.value)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
@@ -633,7 +688,7 @@ function PropertyFormModal({
                       setHighlightInput('');
                     }
                   }}
-                  className="px-4 py-2 bg-brand-teal text-white rounded-lg hover:bg-brand-teal-dark transition"
+                  className="px-4 py-2 bg-brand-secondary text-white rounded-lg hover:bg-brand-secondary-dark transition"
                 >
                   Add
                 </button>
@@ -651,7 +706,7 @@ function PropertyFormModal({
                             highlights: formData.highlights.filter((_, i) => i !== index),
                           });
                         }}
-                        className="text-red-600 hover:text-red-800 ml-2"
+                        className="text-brand-secondary hover:text-red-800 ml-2"
                       >
                         ×
                       </button>
@@ -673,7 +728,7 @@ function PropertyFormModal({
                   placeholder="e.g., G + 39 Storeys"
                   value={formData.storeys}
                   onChange={(e) => setFormData({ ...formData, storeys: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -683,7 +738,7 @@ function PropertyFormModal({
                   placeholder="e.g., 5.5 Acres"
                   value={formData.projectArea}
                   onChange={(e) => setFormData({ ...formData, projectArea: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -693,7 +748,7 @@ function PropertyFormModal({
                   placeholder="e.g., Ready to Move / Under Construction"
                   value={formData.possessionStatus}
                   onChange={(e) => setFormData({ ...formData, possessionStatus: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -703,7 +758,7 @@ function PropertyFormModal({
                   placeholder="e.g., 12-2028"
                   value={formData.possessionDate}
                   onChange={(e) => setFormData({ ...formData, possessionDate: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -713,7 +768,7 @@ function PropertyFormModal({
                   placeholder="e.g., A52000000045"
                   value={formData.advertiserReraNumber}
                   onChange={(e) => setFormData({ ...formData, advertiserReraNumber: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -723,7 +778,7 @@ function PropertyFormModal({
                   placeholder="e.g., P51900046369"
                   value={formData.projectReraNumber}
                   onChange={(e) => setFormData({ ...formData, projectReraNumber: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div className="md:col-span-2">
@@ -733,7 +788,7 @@ function PropertyFormModal({
                   placeholder="Complete property address"
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
             </div>
@@ -749,14 +804,14 @@ function PropertyFormModal({
                   placeholder="Type (e.g., 2 BHK)"
                   value={pricingInput.type}
                   onChange={(e) => setPricingInput({ ...pricingInput, type: e.target.value })}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
                 <input
                   type="text"
                   placeholder="Carpet Area (e.g., 687 Sq.ft)"
                   value={pricingInput.carpetArea}
                   onChange={(e) => setPricingInput({ ...pricingInput, carpetArea: e.target.value })}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
                 <div className="flex gap-2">
                   <input
@@ -764,7 +819,7 @@ function PropertyFormModal({
                     placeholder="Price (e.g., ₹ 2.75 Cr)"
                     value={pricingInput.price}
                     onChange={(e) => setPricingInput({ ...pricingInput, price: e.target.value })}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                   />
                   <button
                     type="button"
@@ -777,7 +832,7 @@ function PropertyFormModal({
                         setPricingInput({ type: '', carpetArea: '', price: '' });
                       }
                     }}
-                    className="px-4 py-2 bg-brand-teal text-white rounded-lg hover:bg-brand-teal-dark transition"
+                    className="px-4 py-2 bg-brand-secondary text-white rounded-lg hover:bg-brand-secondary-dark transition"
                   >
                     Add
                   </button>
@@ -798,7 +853,7 @@ function PropertyFormModal({
                             pricing: formData.pricing.filter((_, i) => i !== index),
                           });
                         }}
-                        className="text-red-600 hover:text-red-800 ml-2"
+                        className="text-brand-secondary hover:text-red-800 ml-2"
                       >
                         ×
                       </button>
@@ -819,7 +874,7 @@ function PropertyFormModal({
                   placeholder="Enter amenity (e.g., Swimming Pool)"
                   value={amenityInput}
                   onChange={(e) => setAmenityInput(e.target.value)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
@@ -844,7 +899,7 @@ function PropertyFormModal({
                       setAmenityInput('');
                     }
                   }}
-                  className="px-4 py-2 bg-brand-teal text-white rounded-lg hover:bg-brand-teal-dark transition"
+                  className="px-4 py-2 bg-brand-secondary text-white rounded-lg hover:bg-brand-secondary-dark transition"
                 >
                   Add
                 </button>
@@ -862,7 +917,7 @@ function PropertyFormModal({
                             amenities: formData.amenities.filter((_, i) => i !== index),
                           });
                         }}
-                        className="text-red-600 hover:text-red-800 ml-2"
+                        className="text-brand-secondary hover:text-red-800 ml-2"
                       >
                         ×
                       </button>
@@ -883,7 +938,7 @@ function PropertyFormModal({
                   placeholder="Enter facility (e.g., Lift)"
                   value={facilityInput}
                   onChange={(e) => setFacilityInput(e.target.value)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
@@ -908,7 +963,7 @@ function PropertyFormModal({
                       setFacilityInput('');
                     }
                   }}
-                  className="px-4 py-2 bg-brand-teal text-white rounded-lg hover:bg-brand-teal-dark transition"
+                  className="px-4 py-2 bg-brand-secondary text-white rounded-lg hover:bg-brand-secondary-dark transition"
                 >
                   Add
                 </button>
@@ -926,7 +981,7 @@ function PropertyFormModal({
                             facilities: formData.facilities.filter((_, i) => i !== index),
                           });
                         }}
-                        className="text-red-600 hover:text-red-800 ml-2"
+                        className="text-brand-secondary hover:text-red-800 ml-2"
                       >
                         ×
                       </button>
@@ -957,7 +1012,7 @@ function PropertyFormModal({
                           floor: { ...formData.specifications.floor, livingDining: e.target.value },
                         },
                       })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                     />
                   </div>
                   <div>
@@ -973,7 +1028,7 @@ function PropertyFormModal({
                           floor: { ...formData.specifications.floor, bathroomUtility: e.target.value },
                         },
                       })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                     />
                   </div>
                   <div>
@@ -989,7 +1044,7 @@ function PropertyFormModal({
                           floor: { ...formData.specifications.floor, kitchen: e.target.value },
                         },
                       })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                     />
                   </div>
                 </div>
@@ -1010,7 +1065,7 @@ function PropertyFormModal({
                           fitting: { ...formData.specifications.fitting, bathroom: e.target.value },
                         },
                       })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                     />
                   </div>
                   <div>
@@ -1026,7 +1081,7 @@ function PropertyFormModal({
                           fitting: { ...formData.specifications.fitting, door: e.target.value },
                         },
                       })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                     />
                   </div>
                   <div>
@@ -1042,7 +1097,7 @@ function PropertyFormModal({
                           fitting: { ...formData.specifications.fitting, windows: e.target.value },
                         },
                       })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                     />
                   </div>
                 </div>
@@ -1063,7 +1118,7 @@ function PropertyFormModal({
                           wallCeiling: { ...formData.specifications.wallCeiling, structure: e.target.value },
                         },
                       })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                     />
                   </div>
                   <div>
@@ -1079,7 +1134,7 @@ function PropertyFormModal({
                           wallCeiling: { ...formData.specifications.wallCeiling, painting: e.target.value },
                         },
                       })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                     />
                   </div>
                   <div>
@@ -1095,7 +1150,7 @@ function PropertyFormModal({
                           wallCeiling: { ...formData.specifications.wallCeiling, wallsCeiling: e.target.value },
                         },
                       })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                     />
                   </div>
                 </div>
@@ -1111,7 +1166,7 @@ function PropertyFormModal({
                 <select
                   value={connectivityInput.category}
                   onChange={(e) => setConnectivityInput({ ...connectivityInput, category: e.target.value })}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 >
                   <option value="commute">Commute</option>
                   <option value="entertainment">Entertainment</option>
@@ -1122,14 +1177,14 @@ function PropertyFormModal({
                   placeholder="Name (e.g., Bus Station)"
                   value={connectivityInput.name}
                   onChange={(e) => setConnectivityInput({ ...connectivityInput, name: e.target.value })}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
                 <input
                   type="text"
                   placeholder="Distance (e.g., 1.7 km)"
                   value={connectivityInput.distance}
                   onChange={(e) => setConnectivityInput({ ...connectivityInput, distance: e.target.value })}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
                 <div className="flex gap-2">
                   <input
@@ -1137,7 +1192,7 @@ function PropertyFormModal({
                     placeholder="Time (e.g., 7 mins)"
                     value={connectivityInput.time}
                     onChange={(e) => setConnectivityInput({ ...connectivityInput, time: e.target.value })}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                   />
                   <button
                     type="button"
@@ -1148,12 +1203,13 @@ function PropertyFormModal({
                           distance: connectivityInput.distance,
                           time: connectivityInput.time,
                         };
+                        const categoryKey = connectivityInput.category as keyof typeof formData.connectivity;
                         setFormData({
                           ...formData,
                           connectivity: {
                             ...formData.connectivity,
-                            [connectivityInput.category]: [
-                              ...(formData.connectivity[connectivityInput.category] || []),
+                            [categoryKey]: [
+                              ...(((formData.connectivity as any)[categoryKey] as any[]) || []),
                               newItem,
                             ],
                           },
@@ -1161,7 +1217,7 @@ function PropertyFormModal({
                         setConnectivityInput({ category: 'commute', name: '', distance: '', time: '' });
                       }
                     }}
-                    className="px-4 py-2 bg-brand-teal text-white rounded-lg hover:bg-brand-teal-dark transition"
+                    className="px-4 py-2 bg-brand-secondary text-white rounded-lg hover:bg-brand-secondary-dark transition"
                   >
                     Add
                   </button>
@@ -1188,7 +1244,7 @@ function PropertyFormModal({
                                 },
                               });
                             }}
-                            className="text-red-600 hover:text-red-800 ml-2"
+                            className="text-brand-secondary hover:text-red-800 ml-2"
                           >
                             ×
                           </button>
@@ -1210,7 +1266,7 @@ function PropertyFormModal({
                   type="checkbox"
                   checked={formData.available}
                   onChange={(e) => setFormData({ ...formData, available: e.target.checked })}
-                  className="w-4 h-4 text-brand-red border-gray-300 rounded focus:ring-brand-red"
+                  className="w-4 h-4 text-brand-secondary border-gray-300 rounded focus:ring-brand-primary"
                 />
                 <span className="ml-2 text-sm text-gray-700 font-medium">Available</span>
               </label>
@@ -1244,12 +1300,12 @@ function PropertyFormModal({
 
                     setUploadingImage(true);
                     try {
-                      const formData = new FormData();
-                      formData.append('file', file);
+                      const uploadData = new FormData();
+                      uploadData.append('file', file);
 
                       const response = await fetch('/api/upload/image', {
                         method: 'POST',
-                        body: formData,
+                        body: uploadData,
                       });
 
                       if (!response.ok) {
@@ -1272,10 +1328,10 @@ function PropertyFormModal({
                     }
                   }}
                   disabled={uploadingImage}
-                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 {uploadingImage && (
-                  <p className="text-xs text-brand-teal mt-1">Uploading image to Cloudinary...</p>
+                  <p className="text-xs text-brand-primary mt-1">Uploading image to Cloudinary...</p>
                 )}
                 <p className="text-xs text-gray-500 mt-1">
                   Supported formats: JPEG, PNG, WebP, GIF (Max 10MB)
@@ -1289,7 +1345,7 @@ function PropertyFormModal({
                   placeholder="Or enter Image URL"
                   value={imageInput}
                   onChange={(e) => setImageInput(e.target.value)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
@@ -1314,7 +1370,7 @@ function PropertyFormModal({
                       setImageInput('');
                     }
                   }}
-                  className="px-4 py-2 bg-brand-teal text-white rounded-lg hover:bg-brand-teal-dark transition"
+                  className="px-4 py-2 bg-brand-secondary text-white rounded-lg hover:bg-brand-secondary-dark transition"
                 >
                   Add URL
                 </button>
@@ -1360,7 +1416,7 @@ function PropertyFormModal({
             <button
               type="submit"
               disabled={submitting}
-              className="px-6 py-2 bg-brand-red text-white rounded-lg font-semibold hover:bg-brand-red-dark transition disabled:opacity-50"
+              className="px-6 py-2 bg-brand-primary text-white rounded-lg font-semibold hover:bg-brand-primary-dark transition disabled:opacity-50"
             >
               {submitting ? 'Saving...' : property ? 'Update Property' : 'Add Property'}
             </button>

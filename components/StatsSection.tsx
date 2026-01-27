@@ -39,25 +39,25 @@ export default function StatsSection() {
   ];
 
   return (
-    <section className="py-20 bg-gray-100">
+    <section className="py-20 bg-brand-primary text-white">
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((stat, index) => (
-            <div key={index} className="text-center">
+            <div key={index} className="text-center group hover:-translate-y-2 transition-transform duration-300">
               {/* Icon */}
               <div className="flex justify-center mb-6">
-                <div className="text-brand-red">
+                <div className="text-brand-secondary group-hover:scale-110 transition-transform duration-300">
                   {stat.icon}
                 </div>
               </div>
-              
+
               {/* Number */}
-              <div className="text-5xl md:text-6xl font-bold text-gray-800 mb-3">
+              <div className="text-5xl md:text-6xl font-bold text-white mb-3">
                 {stat.number}
               </div>
-              
+
               {/* Label */}
-              <div className="text-gray-700 text-lg font-medium">
+              <div className="text-gray-300 text-lg font-medium">
                 {stat.label}
               </div>
             </div>

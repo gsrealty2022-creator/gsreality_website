@@ -11,13 +11,20 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        'navy-blue': '#1a365d',
-        'brand-teal': '#2fb9a2',
-        'brand-red': '#c63f2b',
-        'brand-teal-light': '#4fc5b0',
-        'brand-teal-dark': '#259a87',
-        'brand-red-light': '#e05a47',
-        'brand-red-dark': '#a83222',
+        'navy-blue': '#0f172a',
+        'brand-primary': '#0f172a', // Main Navy Blue
+        'brand-secondary': '#C5A028', // Gold (Logo Match)
+        'brand-primary-light': '#1e293b', // Lighter Navy
+        'brand-primary-dark': '#020617', // Darker Navy
+        'brand-secondary-light': '#D4AF37', // Lighter Gold
+        'brand-secondary-dark': '#B8860B', // Darker Gold
+        // Legacy support mapped to new theme
+        'brand-primary': '#0f172a',
+        'brand-secondary': '#C5A028',
+        'brand-primary-light': '#334155',
+        'brand-primary-dark': '#020617',
+        'brand-secondary-light': '#D4AF37',
+        'brand-secondary-dark': '#B8860B',
       },
       animation: {
         'spin-slow': 'spin 1s linear infinite',

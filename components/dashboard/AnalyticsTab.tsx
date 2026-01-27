@@ -28,14 +28,14 @@ export default function AnalyticsTab() {
       const response = await fetch('/api/properties');
       if (!response.ok) throw new Error('Failed to fetch properties');
       const properties = await response.json();
-      
+
       const calculatedStats = {
         total: properties.length,
         active: properties.filter((p: any) => p.available).length,
         featured: properties.filter((p: any) => p.featured).length,
         outOfStock: properties.filter((p: any) => !p.available).length,
       };
-      
+
       setStats(calculatedStats);
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -50,33 +50,33 @@ export default function AnalyticsTab() {
       title: 'Total Properties',
       value: stats.total,
       icon: '🏠',
-      color: 'blue',
-      bgColor: 'bg-blue-50',
-      textColor: 'text-blue-600',
+      color: 'navy',
+      bgColor: 'bg-brand-primary/10',
+      textColor: 'text-brand-primary',
     },
     {
       title: 'Available Properties',
       value: stats.active,
       icon: '✅',
-      color: 'green',
-      bgColor: 'bg-green-50',
-      textColor: 'text-green-600',
+      color: 'navy-light',
+      bgColor: 'bg-brand-primary/5',
+      textColor: 'text-brand-primary-light',
     },
     {
       title: 'Featured Properties',
       value: stats.featured,
       icon: '⭐',
-      color: 'yellow',
-      bgColor: 'bg-yellow-50',
-      textColor: 'text-yellow-600',
+      color: 'gold',
+      bgColor: 'bg-brand-secondary/10',
+      textColor: 'text-brand-secondary',
     },
     {
       title: 'Unavailable Properties',
       value: stats.outOfStock,
       icon: '❌',
-      color: 'red',
-      bgColor: 'bg-red-50',
-      textColor: 'text-red-600',
+      color: 'gray',
+      bgColor: 'bg-gray-50',
+      textColor: 'text-gray-600',
     },
   ];
 

@@ -92,7 +92,7 @@ export default function BlogsTab() {
         </div>
         <button
           onClick={handleAddBlog}
-          className="bg-brand-red text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-red-dark transition shadow-lg"
+          className="bg-brand-secondary text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-secondary-dark transition shadow-lg"
         >
           + Add Blog
         </button>
@@ -107,7 +107,7 @@ export default function BlogsTab() {
             <p className="text-gray-600 mb-6">Get started by adding your first blog post</p>
             <button
               onClick={handleAddBlog}
-              className="bg-brand-red text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-red-dark transition"
+              className="bg-brand-secondary text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-secondary-dark transition"
             >
               Add Your First Blog
             </button>
@@ -168,7 +168,7 @@ export default function BlogsTab() {
                         </button>
                         <button
                           onClick={() => handleDeleteBlog(blog._id)}
-                          className="text-red-600 hover:text-red-800"
+                          className="text-brand-secondary hover:text-red-800"
                           title="Delete"
                         >
                           🗑️
@@ -304,7 +304,7 @@ function BlogFormModal({
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   placeholder="e.g., 10 Tips for First-Time Home Buyers"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -317,7 +317,7 @@ function BlogFormModal({
                   value={formData.author}
                   onChange={(e) => setFormData({ ...formData, author: e.target.value })}
                   placeholder="e.g., John Smith"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -330,7 +330,7 @@ function BlogFormModal({
                   value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                   placeholder="e.g., November 15, 2024"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -342,7 +342,7 @@ function BlogFormModal({
                   value={formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                   placeholder="https://example.com/image.jpg"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
                 {formData.image && (
                   <div className="mt-2">
@@ -373,7 +373,7 @@ function BlogFormModal({
                 value={formData.excerpt}
                 onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                 placeholder="A brief summary of the blog post (shown on homepage)"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
               />
             </div>
             <div className="mt-4">
@@ -385,7 +385,7 @@ function BlogFormModal({
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 placeholder="Full blog post content (for blog detail page)"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent text-gray-900 bg-white"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
               />
               <p className="text-xs text-gray-500 mt-1">
                 If left empty, the excerpt will be used as content
@@ -405,7 +405,7 @@ function BlogFormModal({
             <button
               type="submit"
               disabled={submitting}
-              className="px-6 py-2 bg-brand-red text-white rounded-lg font-semibold hover:bg-brand-red-dark transition disabled:opacity-50"
+              className="px-6 py-2 bg-brand-primary text-white rounded-lg font-semibold hover:bg-brand-primary-light transition disabled:opacity-50"
             >
               {submitting ? 'Saving...' : blog ? 'Update Blog' : 'Add Blog'}
             </button>
