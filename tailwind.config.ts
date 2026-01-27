@@ -18,13 +18,6 @@ const config: Config = {
         'brand-primary-dark': '#020617', // Darker Navy
         'brand-secondary-light': '#D4AF37', // Lighter Gold
         'brand-secondary-dark': '#B8860B', // Darker Gold
-        // Legacy support mapped to new theme
-        'brand-primary': '#0f172a',
-        'brand-secondary': '#C5A028',
-        'brand-primary-light': '#334155',
-        'brand-primary-dark': '#020617',
-        'brand-secondary-light': '#D4AF37',
-        'brand-secondary-dark': '#B8860B',
       },
       animation: {
         'spin-slow': 'spin 1s linear infinite',
