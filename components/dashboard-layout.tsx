@@ -52,6 +52,19 @@ export default function DashboardLayout({ children, activeTab, onTabChange }: Da
               <div className="w-10 h-10 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-full flex items-center justify-center">
                 <span className="text-white font-semibold text-sm">A</span>
               </div>
+              {/* Logout Button */}
+              <button
+                onClick={() => {
+                  localStorage.removeItem('gs_admin_session');
+                  window.location.reload();
+                }}
+                className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                title="Logout"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
             </div>
           </div>
         </div>
