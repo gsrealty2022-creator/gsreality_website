@@ -3,8 +3,8 @@
 import { useEffect } from 'react';
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import FeaturedPropertyCard from "@/components/FeaturedPropertyCard";
-import AboutSection from "@/components/AboutSection";
+import HousingTopPicks from "@/components/HousingTopPicks";
+import HowItWorks from "@/components/HowItWorks";
 import StatsSection from "@/components/StatsSection";
 import TopSellingProjects from "@/components/TopSellingProjects";
 import Testimonials from "@/components/Testimonials";
@@ -28,11 +28,11 @@ export default function Home() {
       <div id="hero">
         <Hero />
       </div>
-      <FeaturedPropertyCard />
       <div>
         <div id="top-selling">
           <TopSellingProjects />
         </div>
+        <HousingTopPicks />
         <div id="find-by-locations">
           <FindByLocations />
         </div>
@@ -46,8 +46,8 @@ export default function Home() {
         <div id="stats">
           <StatsSection />
         </div>
-        <div id="about">
-          <AboutSection />
+        <div id="how-it-works">
+          <HowItWorks />
         </div>
         <div id="featured-developers">
           <FeaturedDevelopers />

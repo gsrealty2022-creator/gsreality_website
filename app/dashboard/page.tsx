@@ -9,6 +9,9 @@ import DevelopersTab from '@/components/dashboard/DevelopersTab';
 import BlogsTab from '@/components/dashboard/BlogsTab';
 import CustomersTab from '@/components/dashboard/CustomersTab';
 import LocationManager from '@/components/dashboard/LocationManager';
+import HeroManager from '@/components/dashboard/HeroManager';
+import TestimonialsTab from '@/components/dashboard/TestimonialsTab';
+import PlotsTab from '@/components/dashboard/PlotsTab';
 
 
 export default function DashboardPage() {
@@ -20,6 +23,10 @@ export default function DashboardPage() {
         return <AnalyticsTab />;
       case 'properties':
         return <PropertiesTab />;
+      case 'hero':
+        return <HeroManager />;
+      case 'plots':
+        return <PlotsTab />;
       case 'orders':
         return <OrdersTab />;
       case 'developers':
@@ -30,6 +37,8 @@ export default function DashboardPage() {
         return <BlogsTab />;
       case 'customers':
         return <CustomersTab />;
+      case 'testimonials':
+        return <TestimonialsTab />;
       default:
         return <AnalyticsTab />;
     }

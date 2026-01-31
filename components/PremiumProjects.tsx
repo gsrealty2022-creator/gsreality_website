@@ -78,7 +78,7 @@ export default function PremiumProjects() {
 
   const fetchProperties = async () => {
     try {
-      const response = await fetch('/api/properties');
+      const response = await fetch('/api/projects');
       if (response.ok) {
         const data = await response.json();
         // Filter properties that should be shown in Premium Projects
@@ -132,7 +132,7 @@ export default function PremiumProjects() {
             {topProjects.map((project: any) => (
               <div
                 key={project.id}
-                onClick={() => window.location.href = `/view-details/${String(project.id)}`}
+                onClick={() => window.location.href = `/view-project/${String(project.id)}`}
                 className="group relative h-[400px] md:h-[500px] rounded-xl overflow-hidden cursor-pointer"
               >
                 {/* Image with Hover Effect */}
@@ -181,7 +181,7 @@ export default function PremiumProjects() {
             {bottomProjects.map((project: any) => (
               <div
                 key={project.id}
-                onClick={() => window.location.href = `/view-details/${String(project.id)}`}
+                onClick={() => window.location.href = `/view-project/${String(project.id)}`}
                 className="group relative h-[350px] md:h-[400px] rounded-xl overflow-hidden cursor-pointer"
               >
                 {/* Image with Hover Effect */}

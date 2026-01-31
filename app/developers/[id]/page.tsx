@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import PropertyCard from '@/components/PropertyCard';
+import ProjectCard from '@/components/ProjectCard';
 import Image from 'next/image';
 
 interface Developer {
@@ -63,7 +63,7 @@ export default function DeveloperDetailsPage() {
   const fetchProperties = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/properties');
+      const response = await fetch('/api/projects');
       if (response.ok) {
         const allProperties = await response.json();
         // Filter properties by developer name
@@ -224,7 +224,7 @@ export default function DeveloperDetailsPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {properties.map((property) => (
-                <PropertyCard key={property._id} property={property} />
+                <ProjectCard key={property._id} property={property} />
               ))}
             </div>
           )}

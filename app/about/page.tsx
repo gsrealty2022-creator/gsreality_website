@@ -40,7 +40,7 @@ export default function AboutPage() {
             <div className="mb-16">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  GS Reality has been a leading name in the real estate industry, dedicated to helping
+                  GS Realty has been a leading name in the real estate industry, dedicated to helping
                   individuals and families find their perfect homes and investment opportunities.
                   With years of experience and a commitment to excellence, we have built a reputation
                   for integrity, professionalism, and outstanding customer service.
@@ -57,7 +57,7 @@ export default function AboutPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
               <div className="text-center p-8 bg-white rounded-xl shadow-lg border-t-4 border-brand-primary hover:shadow-2xl transition-all">
                 <div className="text-5xl font-bold text-brand-primary mb-3">500+</div>
-                <div className="text-gray-700 font-semibold text-lg">Properties Sold</div>
+                <div className="text-gray-700 font-semibold text-lg">Projects Sold</div>
               </div>
               <div className="text-center p-8 bg-white rounded-xl shadow-lg border-t-4 border-brand-secondary hover:shadow-2xl transition-all">
                 <div className="text-5xl font-bold text-brand-secondary mb-3">1000+</div>

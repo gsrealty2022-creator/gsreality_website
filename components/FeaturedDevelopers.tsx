@@ -133,13 +133,20 @@ export default function FeaturedDevelopers() {
   // Duplicate developers for seamless infinite scroll
   const developers = [...baseDevelopers, ...baseDevelopers];
 
+  const [zoomedLogo, setZoomedLogo] = useState<React.ReactNode | null>(null);
+
   const handleDeveloperClick = (developer: any) => {
     if (developer.isDatabase && developer._id) {
       router.push(`/developers/${developer._id}`);
     } else {
-      // For demo developers, show a message
-      alert(`Developer: ${developer.name}\nThis is a demo developer. Add it to the database to view details.`);
+      // Open zoom modal for demo developers or non-linked ones
+      setZoomedLogo(developer.logo);
     }
+  };
+
+  const handleZoom = (e: React.MouseEvent, logo: React.ReactNode) => {
+    e.stopPropagation();
+    setZoomedLogo(logo);
   };
 
   return (
@@ -152,30 +159,64 @@ export default function FeaturedDevelopers() {
               Partners with
               <span className="absolute bottom-0 left-0 w-full h-1 bg-brand-secondary"></span>
             </span>
-            <span className="text-gray-900 ml-4">GS Reality</span>
+            <span className="text-gray-900 ml-4">GS Realty</span>
           </h2>
         </div>
 
         {/* Slider Container - Continuous Scroll */}
-        <div className="relative overflow-hidden">
-          <div className="flex animate-scroll-left">
+        <div className="relative overflow-hidden group/slider">
+          <div className="flex animate-scroll-left hover:pause-animation">
             {developers.map((developer, index) => (
               <div
                 key={`${developer.id}-${index}`}
-                className="flex-shrink-0 px-3"
-                style={{ width: '300px' }}
+                className="flex-shrink-0 px-4"
+                style={{ width: '340px' }}
               >
                 <div
-                  className="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow border border-gray-200 cursor-pointer"
+                  className="bg-white rounded-xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 cursor-pointer group relative flex flex-col items-center justify-center h-48"
                   onClick={() => handleDeveloperClick(developer)}
                 >
-                  {developer.logo}
+                  {/* Zoom Icon Button */}
+                  <button
+                    onClick={(e) => handleZoom(e, developer.logo)}
+                    className="absolute top-3 right-3 p-2 bg-gray-100 rounded-full text-gray-400 hover:text-brand-primary hover:bg-brand-primary/10 transition-colors opacity-0 group-hover:opacity-100"
+                    title="Zoom Logo"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" /></svg>
+                  </button>
+
+                  <div className="w-full h-32 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
+                    {developer.logo}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {/* Zoom Modal */}
+      {zoomedLogo && (
+        <div
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in"
+          onClick={() => setZoomedLogo(null)}
+        >
+          <div
+            className="bg-white p-8 rounded-2xl max-w-2xl w-full max-h-[80vh] flex items-center justify-center relative shadow-2xl transform transition-all scale-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setZoomedLogo(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <div className="w-full h-full min-h-[300px] flex items-center justify-center text-4xl [&>div]:!text-5xl [&_img]:!h-auto [&_img]:max-h-[60vh]">
+              {zoomedLogo}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

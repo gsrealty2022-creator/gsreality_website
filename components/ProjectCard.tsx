@@ -92,8 +92,8 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             </div>
           </div>
           <button
-            onClick={() => window.location.href = `/view-details/${displayId}`}
-            className="bg-brand-secondary text-white px-6 py-2 rounded-xl font-bold hover:bg-brand-secondary-dark transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm"
+            onClick={() => window.location.href = `/view-project/${displayId}`}
+            className="bg-[#C5A028] text-white px-6 py-2 rounded-lg font-bold hover:bg-[#B08D1F] transition-all shadow-md text-sm uppercase tracking-wide"
           >
             View Details
           </button>

@@ -142,12 +142,12 @@ export default function RecentBlogs() {
                   {blog.date}
                 </p>
                 <Link href={`/blogs/${blog.id}`} className="block">
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900 leading-snug group-hover:text-sky-500 transition-colors cursor-pointer line-clamp-2">
+                  <h3 className="text-lg md:text-xl font-bold text-gray-900 leading-snug group-hover:text-brand-secondary transition-colors cursor-pointer line-clamp-2">
                     {blog.title}
                   </h3>
                 </Link>
                 <div className="pt-2">
-                  <a href="#" className="text-sky-400 font-bold text-sm uppercase tracking-wider hover:text-sky-600 transition-colors">
+                  <a href="#" className="text-brand-secondary font-bold text-sm uppercase tracking-wider hover:text-brand-secondary-dark transition-colors">
                     {blog.category}
                   </a>
                 </div>
@@ -162,7 +162,7 @@ export default function RecentBlogs() {
             {/* Prev Button */}
             <button
               onClick={prevSlide}
-              className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-sky-500 hover:bg-white transition shadow-sm"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-brand-secondary hover:bg-white transition shadow-sm"
               aria-label="Previous"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -176,7 +176,7 @@ export default function RecentBlogs() {
                 <button
                   key={index}
                   onClick={() => setCurrentPage(index)}
-                  className={`h-2 rounded-full transition-all duration-300 ${currentPage === index ? 'w-8 bg-sky-400 shadow-lg shadow-sky-200' : 'w-2 bg-sky-200'
+                  className={`h-2 rounded-full transition-all duration-300 ${currentPage === index ? 'w-8 bg-brand-secondary shadow-lg shadow-brand-secondary/20' : 'w-2 bg-brand-secondary/20'
                     }`}
                   aria-label={`Go to page ${index + 1}`}
                 />
@@ -186,7 +186,7 @@ export default function RecentBlogs() {
             {/* Next Button */}
             <button
               onClick={nextSlide}
-              className="w-10 h-10 rounded-full flex items-center justify-center bg-sky-400 text-white hover:bg-sky-500 transition shadow-lg shadow-sky-200"
+              className="w-10 h-10 rounded-full flex items-center justify-center bg-brand-secondary text-white hover:bg-brand-secondary-dark transition shadow-lg shadow-brand-secondary/20"
               aria-label="Next"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

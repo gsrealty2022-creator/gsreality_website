@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 interface Testimonial {
-    id: number;
+    id?: number | string;
+    _id?: string;
     name: string;
     role: string;
     quote: string;
@@ -12,43 +13,82 @@ interface Testimonial {
     image: string;
 }
 
-const testimonials: Testimonial[] = [
+const demoTestimonials: Testimonial[] = [
     {
         id: 1,
-        name: "Daisybee",
-        role: "Themeforest User",
-        quote: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore ets.",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dores.",
-        image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
+        name: "Arjun Sharma",
+        role: "Corporate Executive",
+        quote: "GS Realty redefined my property search. Their transparency and premium collection made finding my Mumbai luxury home seamless.",
+        description: "The team's dedication to understanding my specific requirements was impressive. They didn't just show me houses; they found me a lifestyle.",
+        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
     },
     {
         id: 2,
-        name: "John Doe",
-        role: "Real Estate Client",
-        quote: "Finding my dream home was effortless with GS Reality. Their team is truly professional and dedicated.",
-        description: "The support I received throughout the process was exceptional. They understood my needs perfectly.",
-        image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop"
+        name: "Priya Mehra",
+        role: "Tech Entrepreneur",
+        quote: "The market insights provided by the team were invaluable. I successfully invested in the Godrej Zenith project with complete confidence.",
+        description: "As an investor, I value data and transparency. GS Realty provided thorough project backgrounds that made my decision easy and profitable.",
+        image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
     },
     {
         id: 3,
-        name: "Sarah Miller",
-        role: "Property Investor",
-        quote: "Highly recommended for anyone looking to invest in premium properties. The market insights are invaluable.",
-        description: "I've worked with many agencies, but the transparency here is what sets them apart from the rest.",
-        image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop"
+        name: "Vikram Malhotra",
+        role: "Senior Architect",
+        quote: "As an architect, I'm picky about design and quality. GS Realty’s curation of high-end developments is truly exceptional.",
+        description: "I've worked with many agencies, but the transparency and depth of property specifications here is what sets them apart from the rest.",
+        image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop"
     }
 ];
 
 export default function Testimonials() {
     const [activeIndex, setActiveIndex] = useState(0);
+    const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchTestimonials = async () => {
+            try {
+                const response = await fetch('/api/testimonials');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.length > 0) {
+                        setTestimonials(data);
+                    } else {
+                        setTestimonials(demoTestimonials);
+                    }
+                } else {
+                    setTestimonials(demoTestimonials);
+                }
+            } catch (error) {
+                console.error('Error fetching testimonials:', error);
+                setTestimonials(demoTestimonials);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTestimonials();
+    }, []);
 
     const nextTestimonial = () => {
+        if (testimonials.length === 0) return;
         setActiveIndex((prev) => (prev + 1) % testimonials.length);
     };
 
     const prevTestimonial = () => {
+        if (testimonials.length === 0) return;
         setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
     };
+
+    if (loading) {
+        return (
+            <div className="py-24 flex justify-center items-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-secondary"></div>
+            </div>
+        );
+    }
+
+    if (testimonials.length === 0) return null;
 
     return (
         <section className="py-24 bg-white relative overflow-hidden">
@@ -103,7 +143,7 @@ export default function Testimonials() {
 
                         <div className="relative min-h-[300px] flex flex-col items-center">
                             {/* Active Testimonial */}
-                            <div key={testimonials[activeIndex].id} className="animate-in fade-in slide-in-from-right-8 duration-700 flex flex-col items-center">
+                            <div key={testimonials[activeIndex]._id || testimonials[activeIndex].id} className="animate-in fade-in slide-in-from-right-8 duration-700 flex flex-col items-center">
                                 <blockquote className="text-2xl md:text-3xl font-semibold text-brand-secondary leading-tight mb-6">
                                     {testimonials[activeIndex].quote}
                                 </blockquote>
@@ -148,9 +188,9 @@ export default function Testimonials() {
 
                                 {/* Pagination Dots */}
                                 <div className="flex gap-2">
-                                    {testimonials.map((_, index) => (
+                                    {testimonials.map((t, index) => (
                                         <button
-                                            key={index}
+                                            key={t._id || t.id || index}
                                             onClick={() => setActiveIndex(index)}
                                             className={`h-2 rounded-full transition-all duration-300 ${activeIndex === index ? 'w-8 bg-brand-secondary' : 'w-2 bg-amber-200'
                                                 }`}

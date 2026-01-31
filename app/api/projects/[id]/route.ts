@@ -54,6 +54,7 @@ export async function PUT(
       showInTopSelling,
       showInPremium,
       showInNewlyLaunched,
+      showInTopPicks,
       // Highlights
       highlights,
       // Overview
@@ -74,6 +75,7 @@ export async function PUT(
       // Connectivity
       connectivity,
       locationIds,
+      type,
     } = body;
 
     // Build update object
@@ -95,6 +97,7 @@ export async function PUT(
     if (showInTopSelling !== undefined) updateData.showInTopSelling = showInTopSelling;
     if (showInPremium !== undefined) updateData.showInPremium = showInPremium;
     if (showInNewlyLaunched !== undefined) updateData.showInNewlyLaunched = showInNewlyLaunched;
+    if (showInTopPicks !== undefined) updateData.showInTopPicks = showInTopPicks;
     // Highlights
     if (highlights !== undefined) updateData.highlights = highlights;
     // Overview
@@ -115,6 +118,7 @@ export async function PUT(
     // Connectivity
     if (connectivity !== undefined) updateData.connectivity = connectivity;
     if (locationIds !== undefined) updateData.locationIds = locationIds;
+    if (type !== undefined) updateData.type = type;
 
     const result = await db.collection('properties').updateOne(
       { _id: new ObjectId(params.id) },

@@ -67,7 +67,7 @@ interface Developer {
   name: string;
 }
 
-export default function PropertiesTab() {
+export default function PlotsTab() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [developers, setDevelopers] = useState<Developer[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
@@ -116,9 +116,9 @@ export default function PropertiesTab() {
       });
       if (!response.ok) throw new Error('Failed to fetch properties');
       const data = await response.json();
-      console.log('Fetched properties:', data.length);
-      const excludePlots = data.filter((p: Property) => p.type !== 'plot');
-      setProperties(excludePlots);
+      console.log('Fetched plots:', data.length);
+      const plotsOnly = data.filter((p: Property) => p.type === 'plot');
+      setProperties(plotsOnly);
     } catch (error) {
       console.error('Error fetching properties:', error);
       setProperties([]);
@@ -164,14 +164,14 @@ export default function PropertiesTab() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Properties</h1>
-          <p className="text-gray-600 mt-2">Manage your property listings</p>
+          <h1 className="text-3xl font-bold text-gray-900">Plots</h1>
+          <p className="text-gray-600 mt-2">Manage your land and plot listings</p>
         </div>
         <button
           onClick={handleAddProperty}
           className="bg-brand-secondary text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-secondary-dark transition shadow-lg"
         >
-          + Add Property
+          + Add Plot
         </button>
       </div>
 
@@ -179,14 +179,14 @@ export default function PropertiesTab() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {properties.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="text-6xl mb-4">🏠</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No properties yet</h3>
-            <p className="text-gray-600 mb-6">Get started by adding your first property</p>
+            <div className="text-6xl mb-4">🗺️</div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No plots yet</h3>
+            <p className="text-gray-600 mb-6">Get started by adding your first plot listing</p>
             <button
               onClick={handleAddProperty}
               className="bg-brand-secondary text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-secondary-dark transition"
             >
-              Add Your First Property
+              Add Your First Plot
             </button>
           </div>
         ) : (
@@ -195,7 +195,7 @@ export default function PropertiesTab() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Property
+                    Plot
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Category
@@ -365,7 +365,7 @@ function PropertyFormModal({
       entertainment: [],
       essentials: [],
     },
-    type: property?.type || 'apartment',
+    type: property?.type || 'plot',
   });
 
   // State for managing dynamic inputs
@@ -477,7 +477,7 @@ function PropertyFormModal({
       <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900">
-            {property ? 'Edit Property' : 'Add New Property'}
+            {property ? 'Edit Plot' : 'Add New Plot'}
           </h2>
           <button
             onClick={onClose}
@@ -488,13 +488,13 @@ function PropertyFormModal({
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Basic Information */}
+          {/* Plot Information */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Plot Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Property Name *
+                  Plot Name *
                 </label>
                 <input
                   type="text"
@@ -1449,7 +1449,7 @@ function PropertyFormModal({
               disabled={submitting}
               className="px-6 py-2 bg-brand-primary text-white rounded-lg font-semibold hover:bg-brand-primary-dark transition disabled:opacity-50"
             >
-              {submitting ? 'Saving...' : property ? 'Update Property' : 'Add Property'}
+              {submitting ? 'Saving...' : property ? 'Update Plot' : 'Add Plot'}
             </button>
           </div>
         </form>

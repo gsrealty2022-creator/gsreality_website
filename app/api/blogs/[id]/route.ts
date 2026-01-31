@@ -39,7 +39,7 @@ export async function PUT(
     const db = await getDatabase();
     const body = await request.json();
 
-    const { title, author, date, excerpt, content, image } = body;
+    const { title, author, authorImage, authorBio, date, excerpt, content, image } = body;
 
     if (!title || !author || !excerpt) {
       return NextResponse.json(
@@ -51,6 +51,8 @@ export async function PUT(
     const updateData: any = {
       title,
       author,
+      authorImage: authorImage || undefined,
+      authorBio: authorBio || undefined,
       date: date || new Date().toLocaleDateString(),
       excerpt,
       content: content || excerpt,

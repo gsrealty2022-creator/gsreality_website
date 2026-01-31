@@ -23,8 +23,8 @@ export default function Logo({ size = 'navbar' }: LogoProps) {
   return (
     <div className="flex items-center">
       <Image
-        src="/gs_reality.png"
-        alt="GS Reality Logo"
+        src="/gs_realty.png"
+        alt="GS Realty Logo"
         width={config.width}
         height={config.height}
         className={config.className}

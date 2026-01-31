@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
       showInTopSelling,
       showInPremium,
       showInNewlyLaunched,
+      showInTopPicks,
       // Highlights
       highlights,
       // Overview
@@ -59,6 +60,7 @@ export async function POST(request: NextRequest) {
       // Connectivity
       connectivity,
       locationIds,
+      type,
     } = body;
 
     // Validate required fields with specific error messages
@@ -141,6 +143,7 @@ export async function POST(request: NextRequest) {
       showInTopSelling: showInTopSelling || false,
       showInPremium: showInPremium || false,
       showInNewlyLaunched: showInNewlyLaunched || false,
+      showInTopPicks: showInTopPicks || false,
       // Highlights
       highlights: highlights || undefined,
       // Overview
@@ -161,6 +164,7 @@ export async function POST(request: NextRequest) {
       // Connectivity
       connectivity: connectivity || undefined,
       locationIds: locationIds || [],
+      type: type || 'apartment',
       createdAt: new Date(),
       updatedAt: new Date(),
     };

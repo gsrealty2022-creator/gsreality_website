@@ -88,7 +88,7 @@ export default function FindByLocations() {
                                         {location.name}, {location.state}
                                     </h3>
                                     <p className="text-gray-400 text-sm">
-                                        {location.propertyCount} {location.propertyCount === 1 ? 'property' : 'properties'}
+                                        {location.propertyCount} {location.propertyCount === 1 ? 'project' : 'projects'}
                                     </p>
                                 </div>
 

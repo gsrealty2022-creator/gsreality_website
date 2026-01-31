@@ -1,66 +1,88 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
+
+interface Property {
+  _id: string;
+  name: string;
+  developer: string;
+  location: string;
+  price: number;
+  images: string[];
+  showInTopPicks?: boolean;
+  bedrooms?: number;
+  bathrooms?: number;
+}
 
 export default function HousingTopPicks() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const projects = [
-    {
-      id: 1,
-      developerName: "Ishtika Homes",
-      developerLogo: (
-        <div className="w-full h-full bg-white rounded-lg flex items-center justify-center shadow-md">
-          <span className="text-purple-600 font-bold text-xs">ISHIKA HOMES</span>
-        </div>
-      ),
-      projectName: "Ishtika Anahata",
-      location: "Samethanahalli, Bangalore East",
-      price: "₹86.65 L - 1.18 Cr",
-      apartmentTypes: "2, 2.5, 3 BHK Apartments",
-      specialOffer: "No EMI Till Possession",
-      image: "https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=1200&h=600&fit=crop"
-    },
-    {
-      id: 2,
-      developerName: "Rrl Builders And Developers Pvt Ltd",
-      developerLogo: (
-        <div className="w-full h-full bg-gray-800 rounded-lg flex items-center justify-center">
-          <span className="text-yellow-500 font-bold text-sm">RRL</span>
-        </div>
-      ),
-      projectName: "RRL Palm Altezze",
-      location: "Bangalore East, Bangalore",
-      price: "₹1.01 Cr - 1.3 Cr",
-      apartmentTypes: "2, 3 BHK Apartments",
-      specialOffer: null,
-      image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=600&fit=crop"
-    },
-    {
-      id: 3,
-      developerName: "Prestige Group",
-      developerLogo: (
-        <div className="w-full h-full bg-white rounded-lg flex items-center justify-center shadow-md">
-          <span className="text-blue-600 font-bold text-xs">PRESTIGE</span>
-        </div>
-      ),
-      projectName: "Prestige Park Ridge",
-      location: "Whitefield, Bangalore",
-      price: "₹2.5 Cr - 4.5 Cr",
-      apartmentTypes: "3, 4 BHK Apartments",
-      specialOffer: "Early Bird Offer",
-      image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&h=600&fit=crop"
+  useEffect(() => {
+    fetchTopPicks();
+  }, []);
+
+  const fetchTopPicks = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/projects');
+      if (response.ok) {
+        const data = await response.json();
+        // Filter properties that should be shown in top picks
+        const topPicks = data.filter((p: any) => p.showInTopPicks === true);
+
+        if (topPicks.length > 0) {
+          setProjects(topPicks.map((p: any) => ({
+            id: p._id,
+            developerName: p.developer,
+            developerLogo: (
+              <div className="w-full h-full bg-white rounded-lg flex items-center justify-center shadow-md">
+                <span className="text-brand-primary font-bold text-[10px] uppercase text-center px-1">
+                  {p.developer.split(' ')[0]}
+                </span>
+              </div>
+            ),
+            projectName: p.name,
+            location: p.location,
+            price: `₹${p.price.toLocaleString()}`,
+            apartmentTypes: `${p.bedrooms || '2, 3'} BHK Apartments`,
+            specialOffer: p.highlights?.[0] || null,
+            image: p.images[0] || "https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=1200&h=600&fit=crop"
+          })));
+        } else {
+          // Fallback to demo data if no properties are marked as top picks
+          setProjects(DEMO_PROJECTS);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching top picks:', error);
+      setProjects(DEMO_PROJECTS);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   const nextSlide = () => {
+    if (projects.length === 0) return;
     setCurrentIndex((prev) => (prev + 1) % projects.length);
   };
 
   const prevSlide = () => {
+    if (projects.length === 0) return;
     setCurrentIndex((prev) => (prev - 1 + projects.length) % projects.length);
   };
+
+  if (loading) {
+    return (
+      <div className="py-24 bg-white flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-primary"></div>
+      </div>
+    );
+  }
+
+  if (projects.length === 0) return null;
 
   const currentProject = projects[currentIndex];
 
@@ -70,7 +92,7 @@ export default function HousingTopPicks() {
         {/* Heading */}
         <div className="mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
-            GS Reality's top picks
+            GS Realty's top picks
           </h2>
           <p className="text-gray-600 text-lg">
             Explore top living options with us.
@@ -106,8 +128,8 @@ export default function HousingTopPicks() {
                   <h3 className="font-bold text-gray-900 text-sm leading-tight">
                     {projects[(currentIndex - 1 + projects.length) % projects.length].developerName}
                   </h3>
-                  <a href="#" className="text-brand-primary text-xs font-medium hover:underline">
-                    View Projects
+                  <a href={`/view-project/${projects[(currentIndex - 1 + projects.length) % projects.length].id}`} className="text-brand-primary text-xs font-medium hover:underline">
+                    View Project
                   </a>
                 </div>
 
@@ -200,8 +222,8 @@ export default function HousingTopPicks() {
                   <h3 className="font-bold text-gray-900 text-sm leading-tight">
                     {projects[(currentIndex + 1) % projects.length].developerName}
                   </h3>
-                  <a href="#" className="text-brand-primary text-xs font-medium hover:underline">
-                    View Projects
+                  <a href={`/view-project/${projects[(currentIndex + 1) % projects.length].id}`} className="text-brand-primary text-xs font-medium hover:underline">
+                    View Project
                   </a>
                 </div>
 
@@ -240,3 +262,50 @@ export default function HousingTopPicks() {
   );
 }
 
+const DEMO_PROJECTS = [
+  {
+    id: 1,
+    developerName: "Ishtika Homes",
+    developerLogo: (
+      <div className="w-full h-full bg-white rounded-lg flex items-center justify-center shadow-md">
+        <span className="text-purple-600 font-bold text-xs">ISHIKA HOMES</span>
+      </div>
+    ),
+    projectName: "Ishtika Anahata",
+    location: "Samethanahalli, Bangalore East",
+    price: "₹86.65 L - 1.18 Cr",
+    apartmentTypes: "2, 2.5, 3 BHK Apartments",
+    specialOffer: "No EMI Till Possession",
+    image: "https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=1200&h=600&fit=crop"
+  },
+  {
+    id: 2,
+    developerName: "Rrl Builders And Developers Pvt Ltd",
+    developerLogo: (
+      <div className="w-full h-full bg-gray-800 rounded-lg flex items-center justify-center">
+        <span className="text-yellow-500 font-bold text-sm">RRL</span>
+      </div>
+    ),
+    projectName: "RRL Palm Altezze",
+    location: "Bangalore East, Bangalore",
+    price: "₹1.01 Cr - 1.3 Cr",
+    apartmentTypes: "2, 3 BHK Apartments",
+    specialOffer: null,
+    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=600&fit=crop"
+  },
+  {
+    id: 3,
+    developerName: "Prestige Group",
+    developerLogo: (
+      <div className="w-full h-full bg-white rounded-lg flex items-center justify-center shadow-md">
+        <span className="text-blue-600 font-bold text-xs">PRESTIGE</span>
+      </div>
+    ),
+    projectName: "Prestige Park Ridge",
+    location: "Whitefield, Bangalore",
+    price: "₹2.5 Cr - 4.5 Cr",
+    apartmentTypes: "3, 4 BHK Apartments",
+    specialOffer: "Early Bird Offer",
+    image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&h=600&fit=crop"
+  }
+];

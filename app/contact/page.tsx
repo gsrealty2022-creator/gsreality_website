@@ -100,7 +100,7 @@ export default function ContactPage() {
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary"
-                    placeholder="+1 (555) 123-4567"
+                    placeholder="+91 99203 55513"
                   />
                 </div>
                 <div>
@@ -162,9 +162,9 @@ export default function ContactPage() {
                     <div>
                       <h3 className="text-lg font-semibold text-[#1a365d] mb-1">Address</h3>
                       <p className="text-gray-600">
-                        123 Real Estate Avenue<br />
-                        Business District, City 12345<br />
-                        Country
+                        Office No. 9&10, Ace CHS,<br />
+                        Plot no.58, Sector -11, Kharghar,<br />
+                        Navi Mumbai - 410210
                       </p>
                     </div>
                   </div>
@@ -177,8 +177,8 @@ export default function ContactPage() {
                     <div>
                       <h3 className="text-lg font-semibold text-[#1a365d] mb-1">Phone</h3>
                       <p className="text-gray-600">
-                        +1 (555) 123-4567<br />
-                        +1 (555) 123-4568
+                        +91 9920355513<br />
+                        RERA: A51700044481
                       </p>
                     </div>
                   </div>
@@ -191,8 +191,7 @@ export default function ContactPage() {
                     <div>
                       <h3 className="text-lg font-semibold text-[#1a365d] mb-1">Email</h3>
                       <p className="text-gray-600">
-                        info@gsreality.com<br />
-                        support@gsreality.com
+                        gsrealty2022@gmail.com
                       </p>
                     </div>
                   </div>

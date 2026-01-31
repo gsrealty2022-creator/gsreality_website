@@ -74,6 +74,13 @@ export default function DevelopersTab() {
     }
   };
 
+  const [zoomedLogo, setZoomedLogo] = useState<string | null>(null);
+
+  const handleZoom = (e: React.MouseEvent, logoUrl: string) => {
+    e.stopPropagation();
+    setZoomedLogo(logoUrl);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -110,14 +117,25 @@ export default function DevelopersTab() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {developers.map((developer) => (
             <div
               key={developer._id}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 group relative"
             >
+              {/* Zoom Icon Button */}
+              {developer.logo && (
+                <button
+                  onClick={(e) => handleZoom(e, developer.logo!)}
+                  className="absolute top-4 right-4 p-2 bg-gray-100 rounded-full text-gray-400 hover:text-brand-primary hover:bg-brand-primary/10 transition-colors opacity-0 group-hover:opacity-100 z-10"
+                  title="Zoom Logo"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" /></svg>
+                </button>
+              )}
+
               {developer.logo ? (
-                <div className="w-full h-32 bg-white border-2 border-gray-200 rounded-lg mb-4 flex items-center justify-center p-4">
+                <div className="w-full h-40 bg-white border-2 border-gray-100 rounded-lg mb-4 flex items-center justify-center p-4 transition-transform duration-500 group-hover:scale-105">
                   <img
                     src={developer.logo}
                     alt={developer.name}
@@ -125,11 +143,11 @@ export default function DevelopersTab() {
                   />
                 </div>
               ) : (
-                <div className="w-full h-32 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-lg mb-4 flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">{developer.name.charAt(0).toUpperCase()}</span>
+                <div className="w-full h-40 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-lg mb-4 flex items-center justify-center">
+                  <span className="text-white font-bold text-2xl">{developer.name.charAt(0).toUpperCase()}</span>
                 </div>
               )}
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">{developer.name}</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">{developer.name}</h3>
               {developer.rating && (
                 <div className="flex items-center mb-2">
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -145,37 +163,42 @@ export default function DevelopersTab() {
                 </div>
               )}
               {developer.description && (
-                <p className="text-sm text-gray-600 mb-2 line-clamp-2">{developer.description}</p>
+                <p className="text-sm text-gray-600 mb-4 line-clamp-2">{developer.description}</p>
               )}
-              <div className="text-xs text-gray-500 mb-2">
+              <div className="text-xs font-medium text-gray-500 mb-4 uppercase tracking-wide">
                 {developer.establishedYear && <span>Est. {developer.establishedYear}</span>}
                 {developer.establishedYear && developer.totalProjects && <span> • </span>}
                 {developer.totalProjects && <span>{developer.totalProjects} Projects</span>}
               </div>
-              {developer.website && (
-                <a
-                  href={developer.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-brand-primary hover:text-brand-primary-dark"
-                >
-                  Visit Website →
-                </a>
-              )}
-              <div className="flex items-center space-x-2 mt-4 pt-4 border-t border-gray-200">
-                <button
-                  onClick={() => handleEditDeveloper(developer)}
-                  className="text-blue-600 hover:text-blue-800 text-sm"
-                >
-                  Edit
-                </button>
-                <span className="text-gray-300">|</span>
-                <button
-                  onClick={() => handleDeleteDeveloper(developer._id)}
-                  className="text-brand-secondary hover:text-red-800 text-sm"
-                >
-                  Delete
-                </button>
+
+              <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
+                {developer.website ? (
+                  <a
+                    href={developer.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-bold text-brand-primary hover:text-brand-primary-dark"
+                  >
+                    Visit Website →
+                  </a>
+                ) : <div></div>}
+
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => handleEditDeveloper(developer)}
+                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    title="Edit"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    onClick={() => handleDeleteDeveloper(developer._id)}
+                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Delete"
+                  >
+                    🗑️
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -197,9 +220,33 @@ export default function DevelopersTab() {
           }}
         />
       )}
+
+      {/* Zoom Modal */}
+      {zoomedLogo && (
+        <div
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in"
+          onClick={() => setZoomedLogo(null)}
+        >
+          <div
+            className="bg-white p-8 rounded-2xl max-w-2xl w-full max-h-[80vh] flex items-center justify-center relative shadow-2xl transform transition-all scale-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setZoomedLogo(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <div className="w-full h-full min-h-[300px] flex items-center justify-center p-8 bg-white rounded-xl">
+              <img src={zoomedLogo} alt="Zoomed Logo" className="max-w-full max-h-[60vh] object-contain" />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
 
 // Developer Form Modal Component
 function DeveloperFormModal({
@@ -221,6 +268,24 @@ function DeveloperFormModal({
     rating: developer?.rating || 5,
   });
   const [submitting, setSubmitting] = useState(false);
+  const [uploadMethod, setUploadMethod] = useState<'url' | 'file'>('url');
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      alert('File size should be less than 2MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData({ ...formData, logo: reader.result as string });
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -259,7 +324,7 @@ function DeveloperFormModal({
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
           <h2 className="text-2xl font-bold text-gray-900">
             {developer ? 'Edit Developer' : 'Add New Developer'}
           </h2>
@@ -287,19 +352,57 @@ function DeveloperFormModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Logo URL (Optional)
-            </label>
-            <input
-              type="url"
-              value={formData.logo}
-              onChange={(e) => setFormData({ ...formData, logo: e.target.value })}
-              placeholder="https://example.com/logo.png"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
-            />
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Logo (Optional)
+              </label>
+              <div className="flex gap-2 bg-gray-100 rounded-lg p-1">
+                <button
+                  type="button"
+                  onClick={() => setUploadMethod('url')}
+                  className={`px-3 py-1 text-xs font-semibold rounded transition-all ${uploadMethod === 'url'
+                      ? 'bg-white text-brand-primary shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                >
+                  URL
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setUploadMethod('file')}
+                  className={`px-3 py-1 text-xs font-semibold rounded transition-all ${uploadMethod === 'file'
+                      ? 'bg-white text-brand-primary shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                >
+                  Upload File
+                </button>
+              </div>
+            </div>
+
+            {uploadMethod === 'url' ? (
+              <input
+                type="url"
+                value={formData.logo}
+                onChange={(e) => setFormData({ ...formData, logo: e.target.value })}
+                placeholder="https://example.com/logo.png"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
+              />
+            ) : (
+              <div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-primary file:text-white hover:file:bg-brand-primary-dark file:cursor-pointer"
+                />
+                <p className="text-xs text-gray-500 mt-1">Max file size: 2MB. Supported formats: JPG, PNG, SVG, WebP</p>
+              </div>
+            )}
+
             {formData.logo && (
-              <div className="mt-2">
-                <div className="w-full h-24 bg-white border-2 border-gray-200 rounded-lg flex items-center justify-center p-4">
+              <div className="mt-3">
+                <div className="w-full h-32 bg-white border-2 border-gray-200 rounded-xl flex items-center justify-center p-4 relative group">
                   <img
                     src={formData.logo}
                     alt="Logo preview"
@@ -308,6 +411,16 @@ function DeveloperFormModal({
                       (e.target as HTMLImageElement).style.display = 'none';
                     }}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, logo: '' })}
+                    className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                    title="Remove logo"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
               </div>
             )}

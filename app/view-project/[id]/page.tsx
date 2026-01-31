@@ -5,8 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import PropertyStatsSidebar from '@/components/PropertyStatsSidebar';
-import PropertyContactSidebar from '@/components/PropertyContactSidebar';
+import ProjectStatsSidebar from '@/components/ProjectStatsSidebar';
+import ProjectContactSidebar from '@/components/ProjectContactSidebar';
 
 interface Property {
   _id: string;
@@ -119,7 +119,7 @@ export default function PropertyDetailsPage() {
   const fetchProperty = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/properties/${params.id}`);
+      const response = await fetch(`/api/projects/${params.id}`);
       if (!response.ok) throw new Error('Property not found');
       const data = await response.json();
       setProperty(data);
@@ -213,7 +213,7 @@ export default function PropertyDetailsPage() {
           {/* LEFT SIDEBAR - Sticky */}
           <div className="hidden xl:block w-[120px] 2xl:w-[140px] flex-shrink-0">
             <div className="sticky top-24 h-fit">
-              <PropertyStatsSidebar />
+              <ProjectStatsSidebar />
             </div>
           </div>
 
@@ -348,7 +348,7 @@ export default function PropertyDetailsPage() {
                   { label: 'Storeys', value: property.storeys || `G + ${property.bedrooms ? property.bedrooms + 30 : 39}`, icon: '🏢' },
                   { label: 'Project Area', value: property.projectArea || '5.5 Acres', icon: '📏' },
                   { label: 'Possession Status', value: property.possessionStatus || (property.available ? 'Ready to Move' : 'Under Construction'), icon: '🔑' },
-                  { label: 'Advertiser RERA', value: property.advertiserReraNumber || 'A52000000045', icon: '📝' },
+                  { label: 'Advertiser RERA', value: property.advertiserReraNumber || 'A51700044481', icon: '📝' },
                   { label: 'Possession Date', value: property.possessionDate || '12-2028', icon: '📅' },
                   { label: 'Project RERA', value: property.projectReraNumber || 'P51900046369', isLink: true, icon: '📜' },
                 ].map((item, idx) => (
@@ -680,7 +680,7 @@ export default function PropertyDetailsPage() {
           {/* RIGHT SIDEBAR - Sticky */}
           <div className="hidden lg:block w-[320px] 2xl:w-[350px] flex-shrink-0">
             <div className="sticky top-24 h-fit">
-              <PropertyContactSidebar />
+              <ProjectContactSidebar />
             </div>
           </div>
 

@@ -6,6 +6,8 @@ interface Blog {
   _id: string;
   title: string;
   author: string;
+  authorImage?: string;
+  authorBio?: string;
   date: string;
   excerpt: string;
   content?: string;
@@ -215,7 +217,9 @@ function BlogFormModal({
   const [formData, setFormData] = useState({
     title: blog?.title || '',
     author: blog?.author || '',
-    date: blog?.date || new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    authorImage: blog?.authorImage || '',
+    authorBio: blog?.authorBio || '',
+    date: blog?.date || new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }),
     excerpt: blog?.excerpt || '',
     content: blog?.content || blog?.excerpt || '',
     image: blog?.image || '',
@@ -289,125 +293,138 @@ function BlogFormModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Basic Information */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-8">
+          {/* Section: Blog Media */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Blog Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g., 10 Tips for First-Time Home Buyers"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Author Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.author}
-                  onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                  placeholder="e.g., John Smith"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Date *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  placeholder="e.g., November 15, 2024"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Image URL (Optional)
-                </label>
-                <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  placeholder="https://example.com/image.jpg"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
-                />
+            <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-4">Blog Media & Content</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Main Blog Image URL</label>
+                  <input
+                    type="url"
+                    value={formData.image}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    placeholder="https://images.unsplash.com/..."
+                    className="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-xl focus:ring-2 focus:ring-brand-primary outline-none text-gray-900 font-medium transition-all"
+                  />
+                </div>
                 {formData.image && (
-                  <div className="mt-2">
-                    <img
-                      src={formData.image}
-                      alt="Preview"
-                      className="w-full h-32 object-cover rounded-lg"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                      }}
-                    />
+                  <div className="relative aspect-video rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                    <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
                   </div>
                 )}
+              </div>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Blog Title</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="Enter impact title"
+                    className="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-xl focus:ring-2 focus:ring-brand-primary outline-none text-gray-900 font-medium transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Publish Date</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.date}
+                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-xl focus:ring-2 focus:ring-brand-primary outline-none text-gray-900 font-medium transition-all"
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Content */}
+          <hr className="border-gray-100" />
+
+          {/* Section: Author Profile */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Content</h3>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Excerpt / Short Description *
-              </label>
+            <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-4">Author Profile (Newsletter Style)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Author Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.author}
+                    onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                    placeholder="e.g. Vikram Malhotra"
+                    className="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-xl focus:ring-2 focus:ring-brand-primary outline-none text-gray-900 font-medium transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Author Image URL</label>
+                  <input
+                    type="url"
+                    value={formData.authorImage}
+                    onChange={(e) => setFormData({ ...formData, authorImage: e.target.value })}
+                    placeholder="https://..."
+                    className="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-xl focus:ring-2 focus:ring-brand-primary outline-none text-gray-900 font-medium transition-all"
+                  />
+                </div>
+                {formData.authorImage && (
+                  <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                    <img src={formData.authorImage} alt="Author Preview" className="w-12 h-12 rounded-full object-cover border-2 border-brand-secondary" />
+                    <span className="text-xs font-bold text-gray-400">Author Image Preview</span>
+                  </div>
+                )}
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Author Short Bio</label>
+                <textarea
+                  rows={4}
+                  value={formData.authorBio}
+                  onChange={(e) => setFormData({ ...formData, authorBio: e.target.value })}
+                  placeholder="Tell readers about the author's expertise..."
+                  className="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-xl focus:ring-2 focus:ring-brand-primary outline-none text-gray-900 font-medium transition-all h-[calc(100%-24px)]"
+                />
+              </div>
+            </div>
+          </div>
+
+          <hr className="border-gray-100" />
+
+          {/* Section: Written Content */}
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Excerpt (Short Summary)</label>
               <textarea
                 required
-                rows={3}
+                rows={2}
                 value={formData.excerpt}
                 onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                placeholder="A brief summary of the blog post (shown on homepage)"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
+                placeholder="A catchy summary for the listing page..."
+                className="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-xl focus:ring-2 focus:ring-brand-primary outline-none text-gray-900 font-medium transition-all"
               />
             </div>
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Full Content (Optional)
-              </label>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Full Newsletter Content</label>
               <textarea
-                rows={8}
+                rows={10}
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                placeholder="Full blog post content (for blog detail page)"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
+                placeholder="Write your professional insights here..."
+                className="w-full px-4 py-3 border border-gray-100 bg-gray-50 rounded-xl focus:ring-2 focus:ring-brand-primary outline-none text-gray-900 font-medium transition-all"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                If left empty, the excerpt will be used as content
-              </p>
             </div>
           </div>
 
           {/* Form Actions */}
-          <div className="flex items-center justify-end space-x-4 pt-4 border-t border-gray-200">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
-            >
-              Cancel
-            </button>
+          <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-100">
+            <button type="button" onClick={onClose} className="px-8 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition">Cancel</button>
             <button
               type="submit"
               disabled={submitting}
-              className="px-6 py-2 bg-brand-primary text-white rounded-lg font-semibold hover:bg-brand-primary-light transition disabled:opacity-50"
+              className="px-10 py-3 bg-brand-primary text-white rounded-xl font-bold hover:bg-brand-primary-dark transition disabled:opacity-50 shadow-lg shadow-brand-primary/20"
             >
-              {submitting ? 'Saving...' : blog ? 'Update Blog' : 'Add Blog'}
+              {submitting ? 'Processing...' : blog ? 'Update Newsletter' : 'Publish Newsletter'}
             </button>
           </div>
         </form>

@@ -25,7 +25,7 @@ export default function AnalyticsTab() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/properties');
+      const response = await fetch('/api/projects');
       if (!response.ok) throw new Error('Failed to fetch properties');
       const properties = await response.json();
 

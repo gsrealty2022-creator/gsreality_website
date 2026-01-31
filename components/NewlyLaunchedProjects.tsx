@@ -58,7 +58,7 @@ export default function NewlyLaunchedProjects() {
 
   const fetchProperties = async () => {
     try {
-      const response = await fetch('/api/properties');
+      const response = await fetch('/api/projects');
       if (response.ok) {
         const data = await response.json();
         // Filter properties that should be shown in Newly Launched
@@ -118,7 +118,7 @@ export default function NewlyLaunchedProjects() {
             {projects.map((project) => (
               <div
                 key={project.id}
-                onClick={() => window.location.href = `/view-details/${String(project.id)}`}
+                onClick={() => window.location.href = `/view-project/${String(project.id)}`}
                 className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"
               >
                 {/* Image */}

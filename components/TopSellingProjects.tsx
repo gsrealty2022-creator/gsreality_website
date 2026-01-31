@@ -75,7 +75,7 @@ export default function TopSellingProjects() {
 
   const fetchProperties = async () => {
     try {
-      const response = await fetch('/api/properties');
+      const response = await fetch('/api/projects');
       if (response.ok) {
         const data = await response.json();
         const topSellingProperties = data.filter((prop: any) => prop.showInTopSelling === true);
@@ -150,10 +150,10 @@ export default function TopSellingProjects() {
               Discover
               <span className="absolute bottom-0 left-0 w-full h-1 bg-brand-secondary"></span>
             </span>
-            <span className="text-gray-900 ml-4">Latest Properties</span>
+            <span className="text-gray-900 ml-4">Latest Projects</span>
           </h2>
           <p className="text-gray-500 text-lg">
-            Newest Properties Around You
+            Newest Projects Around You
           </p>
         </div>
 
@@ -173,7 +173,7 @@ export default function TopSellingProjects() {
             {projects.map((project, index) => (
               <div
                 key={`${project.id || index}-${index}`}
-                onClick={() => window.location.href = `/view-details/${String(project.id)}`}
+                onClick={() => window.location.href = `/view-project/${String(project.id)}`}
                 className="flex-[0_0_100%] md:flex-[0_0_calc(33.333%-1.33rem)] bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"
               >
                 {/* Image */}

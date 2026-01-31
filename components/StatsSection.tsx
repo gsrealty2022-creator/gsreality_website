@@ -7,7 +7,7 @@ export default function StatsSection() {
         </svg>
       ),
       number: "500+",
-      label: "Total Properties Sold"
+      label: "Total Projects Sold"
     },
     {
       icon: (
@@ -34,7 +34,7 @@ export default function StatsSection() {
         </svg>
       ),
       number: "350+",
-      label: "Properties Listed"
+      label: "Projects Listed"
     }
   ];
 

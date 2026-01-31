@@ -13,10 +13,13 @@ interface DashboardLayoutProps {
 const tabs = [
   { id: 'analytics', label: 'Analytics', icon: '📊' },
   { id: 'properties', label: 'Properties', icon: '🏠' },
+  { id: 'plots', label: 'Plots', icon: '🗺️' },
+  { id: 'hero', label: 'Hero Section', icon: '🎞️' },
   { id: 'orders', label: 'Enquiries', icon: '📋' },
   { id: 'developers', label: 'Developers', icon: '🏢' },
   { id: 'locations', label: 'Locations', icon: '🌍' },
   { id: 'blogs', label: 'Blogs', icon: '📝' },
+  { id: 'testimonials', label: 'Testimonials', icon: '💬' },
   { id: 'customers', label: 'Customers', icon: '👥' },
 ];
 
@@ -31,8 +34,8 @@ export default function DashboardLayout({ children, activeTab, onTabChange }: Da
             {/* Logo and Firm Name */}
             <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition">
               <Image
-                src="/gs_reality.png"
-                alt="GS Reality Logo"
+                src="/gs_realty.png"
+                alt="GS Realty Logo"
                 width={250}
                 height={250}
                 className="h-16 w-auto object-contain"
