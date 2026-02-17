@@ -806,9 +806,21 @@ export default function PropertyDetailsPage() {
                         <p className="text-[#1a2234] font-black mb-4 uppercase text-[10px] tracking-[0.2em] flex items-center gap-2">
                           Site Address
                         </p>
-                        <div className="bg-blue-50/50 p-6 rounded-2xl border border-blue-100/50 text-[#0D263B] font-bold italic relative">
+                        <div className="bg-blue-50/50 p-6 rounded-2xl border border-blue-100/50 text-[#0D263B] font-bold italic relative group/loc flex flex-col md:flex-row md:items-center justify-between gap-4">
                           <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-8 bg-blue-300 rounded-full"></div>
-                          "{property.address || `${property.name}, ${property.location}, India`}"
+                          <span className="flex-1">"{property.address || `${property.name}, ${property.location}, India`}"</span>
+                          <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(property.address || `${property.name}, ${property.location}, India`)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="shrink-0 flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-blue-100 shadow-sm text-[#1a2234] not-italic font-black text-xs hover:bg-[#1a2234] hover:text-white transition-all transform hover:-translate-y-0.5 active:scale-95"
+                          >
+                            <svg className="w-4 h-4 text-[#C5A028]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            Get Directions
+                          </a>
                         </div>
                       </div>
                       <div className="space-y-8">
