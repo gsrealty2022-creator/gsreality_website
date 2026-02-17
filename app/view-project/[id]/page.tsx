@@ -72,43 +72,29 @@ export default function PropertyDetailsPage() {
   const [showFullAbout, setShowFullAbout] = useState(false);
   const [pricingFilter, setPricingFilter] = useState('all');
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState('highlights');
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ['highlights', 'overview', 'about', 'pricing', 'amenities', 'connectivity', 'builder', 'faq'];
-      const scrollPosition = window.scrollY + 200; // Offset for header + sticky nav
+  // New state for redesign
+  const [openSection, setOpenSection] = useState<string | null>('detail');
+  const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
 
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveTab(section);
-            break;
-          }
-        }
-      }
-    };
+  // Mortgage Calculator State
+  const [salePrice, setSalePrice] = useState<number>(0);
+  const [downPayment, setDownPayment] = useState<number>(0);
+  const [loanTerm, setLoanTerm] = useState<number>(20);
+  const [interestRate, setInterestRate] = useState<number>(7.5);
+  const [monthlyPayment, setMonthlyPayment] = useState<number | null>(null);
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const calculateMortgage = () => {
+    const principal = (salePrice - downPayment) * 10000000; // Convert Crores back to raw Rupees
+    const monthlyRate = interestRate / 100 / 12;
+    const numberOfPayments = loanTerm * 12;
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      const headerOffset = 140; // Approx height of Header + Sticky Tab
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+    if (principal <= 0 || monthlyRate <= 0) return;
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-      setActiveTab(id);
-    }
+    const monthly = (principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+    setMonthlyPayment(Math.round(monthly));
   };
+
 
   useEffect(() => {
     if (params.id) {
@@ -133,11 +119,243 @@ export default function PropertyDetailsPage() {
           if (foundDev) setDeveloper(foundDev);
         }
       }
+
+      // Fetch featured properties for sidebar
+      const allPropsResponse = await fetch('/api/projects');
+      if (allPropsResponse.ok) {
+        const allData = await allPropsResponse.json();
+        setFeaturedProperties(allData.filter((p: any) => p._id !== params.id).slice(0, 4));
+      }
+
+      // Initialize mortgage calculator with property price in Crores
+      if (data.price) {
+        const priceInCr = Number((data.price / 10000000).toFixed(2));
+        setSalePrice(priceInCr);
+        setDownPayment(Number((priceInCr * 0.2).toFixed(2))); // Default 20% down, rounded to 2 decimals
+      }
     } catch (error) {
       console.error('Error fetching property:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const AmenityIcon = ({ name }: { name: string }) => {
+    const iconMap: { [key: string]: React.ReactNode } = {
+      'Swimming Pool': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M2.3 20a6 6 0 0 0 3.4 0 6 6 0 0 1 6.6 0 6 6 0 0 0 6.6 0 6 6 0 0 1 3.4 0" />
+          <path d="M17 14v-2a3 3 0 0 0-3-3H4.5" />
+          <path d="M14 9V5a2 2 0 0 0-2-2H4.5" />
+          <rect width="6" height="3" x="14" y="2" rx="1" />
+        </svg>
+      ),
+      'Gymnasium': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="m6.5 6.5 11 11" />
+          <path d="m3 21 3-3" />
+          <path d="m3 3 3 3" />
+          <path d="m18 18 3 3" />
+          <path d="m18 6 3-3" />
+          <path d="M13 3h3" />
+          <path d="M3 8v3" />
+          <path d="M11 21h3" />
+          <path d="M21 13v3" />
+        </svg>
+      ),
+      'Club House': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <path d="M15 21v-8a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v8" />
+        </svg>
+      ),
+      'Kids Play Area': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M10 15v4" />
+          <path d="M14 15v4" />
+          <path d="M6 3v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3" />
+          <path d="m6 6 12 0" />
+          <path d="m6 10 12 0" />
+        </svg>
+      ),
+      'Garden': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="m12 19 0-7" />
+          <path d="M19 12a7 7 0 1 1-14 0c0-3.87 3.13-7 7-7s7 3.13 7 7Z" />
+          <path d="M7 12h10" />
+        </svg>
+      ),
+      'Multi Purpose Court': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <rect width="18" height="12" x="3" y="6" rx="2" />
+          <path d="M3 12h18" />
+          <path d="M12 6v12" />
+        </svg>
+      ),
+      'Golf Course': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M12 2v8" />
+          <path d="m12 2 4 2-4 2" />
+          <path d="M6 12a6 6 0 0 1 12 0c0 2-2 3-6 3s-6-1-6-3Z" />
+          <path d="M12 15v4" />
+          <path d="M8 21h8" />
+        </svg>
+      ),
+      'Senior Citizen Area': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <circle cx="12" cy="7" r="4" />
+          <path d="M5 21v-2a7 7 0 0 1 14 0v2" />
+        </svg>
+      ),
+      'Squash Court': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <circle cx="10" cy="10" r="7" />
+          <path d="m21 21-6-6" />
+          <path d="m15 13 2 2" />
+        </svg>
+      ),
+      'Pets Walking Area': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <circle cx="11" cy="4" r="2" />
+          <path d="M18 19c-1.1 0-2 .9-2 2" />
+          <path d="M20 19c-1.1 0-2 .9-2 2" />
+          <path d="M9 11v6a2 2 0 0 1-2 2H5" />
+          <path d="M11 11h1a2 2 0 0 1 2 2v6" />
+          <path d="m7 7 5 4" />
+        </svg>
+      ),
+      'Multi Purpose Lawn': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M3 20h18" />
+          <path d="M5 20v-4" />
+          <path d="M9 20v-8" />
+          <path d="M13 20v-12" />
+          <path d="M17 20v-6" />
+          <path d="M21 20v-2" />
+        </svg>
+      ),
+      'Box Cricket': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <circle cx="12" cy="12" r="10" />
+          <path d="m12 8 0 8" />
+          <path d="m8 12 8 0" />
+        </svg>
+      ),
+      'Library': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </svg>
+      ),
+      'Open Gym': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M18 20a2 2 0 1 0-4 0" />
+          <path d="M10 20a2 2 0 1 0-4 0" />
+          <path d="M18 20V4" />
+          <path d="M6 20V4" />
+          <path d="M18 8H6" />
+        </svg>
+      ),
+      'Amphitheater': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M3 21h18" />
+          <path d="M6 21v-7a6 6 0 1 1 12 0v7" />
+          <path d="M9 21v-4a3 3 0 1 1 6 0v4" />
+        </svg>
+      ),
+      'Banquet Hall': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M12 2v20" />
+          <path d="M22 17v-4a2 2 0 0 0-2-2h-3L12 7l-5 4H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2z" />
+        </svg>
+      ),
+      'Toddlers Play Area': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <circle cx="8" cy="8" r="3" />
+          <circle cx="16" cy="16" r="3" />
+          <path d="M12 12a6 6 0 0 0 6-6" />
+          <path d="M12 12a6 6 0 0 1-6 6" />
+        </svg>
+      ),
+      'Seating Area': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M7 18V5" />
+          <path d="M17 18V5" />
+          <path d="M7 11h10" />
+          <path d="M5 18h4" />
+          <path d="M15 18h4" />
+        </svg>
+      ),
+      'Creche Outdoor Play Area': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M3 12a9 9 0 0 1 18 0" />
+          <path d="M12 21v-9" />
+          <path d="M7 21h10" />
+        </svg>
+      ),
+      'Table Tennis': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M4 12h16" />
+          <path d="M2 12h2a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H2" />
+          <path d="M22 12h-2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h2" />
+          <path d="M12 12V4" />
+        </svg>
+      ),
+      'Pet Park': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M12 3a9 9 0 0 0-9 9v9" />
+          <path d="M12 3a9 9 0 0 1 9 9v9" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      ),
+      'Indoor games': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+          <circle cx="8" cy="8" r="1.5" />
+          <circle cx="16" cy="16" r="1.5" />
+          <circle cx="8" cy="16" r="1.5" />
+          <circle cx="16" cy="8" r="1.5" />
+        </svg>
+      ),
+      'Star Gazing': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+        </svg>
+      ),
+      'Badminton Court': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M12 12a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z" />
+          <path d="m14 14 6 6" />
+          <path d="m8 14-6 6" />
+        </svg>
+      ),
+      'Skating Ring': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 8a4 4 0 1 0 0 8" />
+        </svg>
+      ),
+      'Mini Theatre': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <rect width="18" height="12" x="3" y="6" rx="2" />
+          <path d="m9 10 6 2-6 2V10Z" />
+        </svg>
+      ),
+      'Multi purpose hall': (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      ),
+    };
+
+    return iconMap[name] || (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+      </svg>
+    );
   };
 
   if (loading) {
@@ -189,7 +407,10 @@ export default function PropertyDetailsPage() {
   const displayedHighlights = showAllHighlights ? defaultHighlights : defaultHighlights.slice(0, 5);
 
   // Default amenities and facilities
-  const defaultAmenities = property.amenities || ['Swimming Pool', 'Gymnasium', 'Clubhouse', 'Parking', 'Security'];
+  const amenitiesToShow = [
+    ...(property.amenities || []),
+    ...(property.facilities || [])
+  ];
   const defaultFacilities = property.facilities || ['Lift', 'Gas Pipeline', 'Power Back Up', 'Parking', 'Security System'];
 
   // Default pricing data
@@ -203,500 +424,652 @@ export default function PropertyDetailsPage() {
     : defaultPricing.filter(p => p.type.includes(pricingFilter));
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#F7F9FC]">
       <Header />
 
-      {/* 3-Column Layout Container */}
-      <div className="container mx-auto px-4 max-w-[1600px] py-8">
-        <div className="flex flex-col xl:flex-row gap-6 relative">
-
-          {/* LEFT SIDEBAR - Sticky */}
-          <div className="hidden xl:block w-[120px] 2xl:w-[140px] flex-shrink-0">
-            <div className="sticky top-24 h-fit">
-              <ProjectStatsSidebar />
-            </div>
-          </div>
-
-          {/* CENTER CONTENT - Scrollable */}
-          <div className="flex-1 min-w-0 space-y-8">
-
-            {/* Gallery / Hero Section (Moved inside center column or kept full width? Based on image, headers are usually full width, but content is center. Let's put the main content here.) */}
-
-            {/* Hero Image Section */}
-            <div className="relative bg-white rounded-2xl shadow-sm border border-gray-100 p-2">
-              <div className="relative w-full h-[400px] md:h-[500px] rounded-xl overflow-hidden">
-                {property.images && property.images.length > 0 ? (
-                  <>
-                    <Image
-                      src={property.images[selectedImage]}
-                      alt={property.name}
-                      fill
-                      className="object-cover"
-                      priority
-                    />
-
-                    {/* Navigation Arrows */}
-                    {property.images.length > 1 && (
-                      <>
-                        <button
-                          onClick={() => setSelectedImage((selectedImage + 1) % property.images.length)}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition"
-                        >
-                          <svg className="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => setSelectedImage((selectedImage - 1 + property.images.length) % property.images.length)}
-                          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition"
-                        >
-                          <svg className="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                          </svg>
-                        </button>
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-                    <p className="text-gray-500">No images available</p>
-                  </div>
-                )}
+      <main className="pb-20">
+        {/* Gallery Section - Full width/Split style */}
+        <div className="relative w-full h-[300px] md:h-[500px] overflow-hidden bg-gray-100 flex">
+          {property.images && property.images.length > 0 ? (
+            <>
+              {/* Main Image */}
+              <div className="relative flex-1 h-full border-r-2 border-white">
+                <Image
+                  src={property.images[selectedImage]}
+                  alt={property.name}
+                  fill
+                  className="object-cover"
+                  priority
+                />
               </div>
-            </div>
-
-            {/* Highlights Section */}
-
-            {/* Horizontal Sticky Navigation Tabs */}
-            <div className="sticky top-24 z-30 bg-white/80 backdrop-blur-md shadow-lg shadow-gray-100 border border-gray-100 -mx-4 px-4 md:mx-0 md:px-2 md:rounded-2xl overflow-x-auto scrollbar-hide py-3">
-              <div className="flex whitespace-nowrap min-w-full gap-2 px-1">
-                {['Highlights', 'Overview', 'About', 'Pricing', 'Amenities', 'Connectivity', 'Builder', 'FAQ'].map((item) => {
-                  const id = item.toLowerCase();
-                  const isActive = activeTab === id;
-                  return (
-                    <button
-                      key={id}
-                      onClick={() => scrollToSection(id)}
-                      className={`
-                        px-5 py-2.5 text-sm font-bold transition-all duration-300 relative rounded-xl
-                        ${isActive
-                          ? 'bg-[#1F4B6B] text-white shadow-md shadow-blue-100 scale-105'
-                          : 'text-gray-500 hover:text-[#1F4B6B] hover:bg-gray-50'
-                        }
-                      `}
-                    >
-                      {item}
-                      {isActive && (
-                        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-white rounded-full"></span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <section id="highlights" className="bg-white border border-gray-100 rounded-2xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] scroll-mt-36 transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-brand-primary/10 rounded-xl flex items-center justify-center text-brand-primary">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                  </svg>
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Highlights of {property.name}</h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {displayedHighlights.map((highlight, index) => (
-                  <div key={index} className="flex items-start gap-4 p-4 rounded-xl bg-gray-50/50 border border-transparent hover:border-blue-100 hover:bg-white transition-all group">
-                    <div className="mt-1 flex-shrink-0">
-                      <div className="w-6 h-6 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary group-hover:scale-110 transition-transform">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                    </div>
-                    <span className="text-gray-700 font-medium leading-relaxed">{highlight}</span>
-                  </div>
-                ))}
-              </div>
-              {defaultHighlights.length > 5 && (
-                <div className="mt-6 flex justify-center">
-                  <button
-                    onClick={() => setShowAllHighlights(!showAllHighlights)}
-                    className="flex items-center gap-2 px-6 py-2.5 rounded-full border border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 hover:text-brand-primary transition-all"
-                  >
-                    <span>{showAllHighlights ? 'View Fewer Highlights' : 'View All Highlights'}</span>
-                    <svg className={`w-4 h-4 transition-transform duration-300 ${showAllHighlights ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
+              {/* Secondary Image (Split view as seen in screenshot) */}
+              {property.images.length > 1 && (
+                <div className="relative hidden md:block w-1/2 h-full">
+                  <Image
+                    src={property.images[(selectedImage + 1) % property.images.length]}
+                    alt={property.name}
+                    fill
+                    className="object-cover opacity-80"
+                  />
                 </div>
               )}
-            </section>
 
-            {/* Overview Section */}
-            <section id="overview" className="bg-white border border-gray-100 rounded-2xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] scroll-mt-36">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-brand-secondary/10 rounded-xl flex items-center justify-center text-brand-secondary">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Overview of {property.name}</h2>
+              {/* Navigation Arrows */}
+              <button
+                onClick={() => setSelectedImage((selectedImage - 1 + property.images.length) % property.images.length)}
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-50 transition"
+              >
+                <svg className="w-6 h-6 text-[#1a2234]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                onClick={() => setSelectedImage((selectedImage + 1) % property.images.length)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-50 transition"
+              >
+                <svg className="w-6 h-6 text-[#1a2234]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+
+              {/* Counter Badge */}
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/50 text-white px-4 py-1 rounded-full text-sm font-medium backdrop-blur-md">
+                {selectedImage + 1} / {property.images.length}
               </div>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  { label: 'Storeys', value: property.storeys || `G + ${property.bedrooms ? property.bedrooms + 30 : 39}`, icon: '🏢' },
-                  { label: 'Project Area', value: property.projectArea || '5.5 Acres', icon: '📏' },
-                  { label: 'Possession Status', value: property.possessionStatus || (property.available ? 'Ready to Move' : 'Under Construction'), icon: '🔑' },
-                  { label: 'Advertiser RERA', value: property.advertiserReraNumber || 'A51700044481', icon: '📝' },
-                  { label: 'Possession Date', value: property.possessionDate || '12-2028', icon: '📅' },
-                  { label: 'Project RERA', value: property.projectReraNumber || 'P51900046369', isLink: true, icon: '📜' },
-                ].map((item, idx) => (
-                  <div key={idx} className="group p-5 rounded-2xl bg-gray-50 border border-transparent hover:border-brand-secondary/30 hover:bg-white transition-all shadow-sm hover:shadow-md">
-                    <div className="flex items-center gap-4">
-                      <div className="text-3xl grayscale group-hover:grayscale-0 transition-all transform group-hover:scale-110">
-                        {item.icon}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{item.label}</span>
-                        <span className={`font-bold text-lg ${item.isLink ? 'text-brand-primary hover:underline cursor-pointer' : 'text-gray-900'}`}>{item.value}</span>
-                      </div>
+            </>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-400">
+              No images available
+            </div>
+          )}
+        </div>
+
+        <div className="container mx-auto px-4 max-w-7xl -mt-10 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* Left Content Column */}
+            <div className="lg:col-span-8 space-y-6">
+              {/* Property Summary Card */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
+                  <div>
+                    <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#FFF5EE] text-[#FF7A59] text-xs font-bold uppercase tracking-wider mb-3">
+                      Sale
+                    </div>
+                    <h1 className="text-3xl font-extrabold text-[#0D263B] mb-2">{property.name}</h1>
+                    <div className="flex items-center text-gray-500 gap-1">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span className="font-medium text-lg">{property.location}</span>
                     </div>
                   </div>
-                ))}
-              </div>
-            </section>
-
-            {/* About Project */}
-            <section id="about" className="bg-white border border-gray-100 rounded-2xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] scroll-mt-36">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-brand-primary/10 rounded-xl flex items-center justify-center text-brand-primary">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900 tracking-tight">About {property.name}</h2>
-              </div>
-              <div className="relative">
-                <div className={`prose max-w-none text-gray-600 leading-relaxed text-lg transition-all duration-500 ${!showFullAbout ? 'max-h-[150px] overflow-hidden' : 'max-h-[2000px]'}`}>
-                  <p className="mb-4">{property.description}</p>
-                  <p>
-                    {property.name} offers spacious {property.bedrooms || 3} BHK apartments in {property.location}.
-                    The project stands tall with modern architecture and is built on an expansive land parcel.
-                  </p>
-                  {!showFullAbout && <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>}
-                </div>
-
-                <div className="mt-6 flex justify-start">
-                  <button
-                    onClick={() => setShowFullAbout(!showFullAbout)}
-                    className="flex items-center gap-2 group text-brand-primary font-bold hover:text-brand-primary-light transition-all"
-                  >
-                    <span>{showFullAbout ? 'Show Less' : 'Read Full Description'}</span>
-                    <svg className={`w-5 h-5 transition-transform duration-300 ${showFullAbout ? 'rotate-180' : 'group-hover:translate-y-1'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </section>
-
-            {/* Pricing */}
-            <section id="pricing" className="bg-white border border-gray-100 rounded-2xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] scroll-mt-36">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-brand-secondary/10 rounded-xl flex items-center justify-center text-brand-secondary">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Pricing</h2>
-              </div>
-
-              <div className="flex flex-wrap gap-3 mb-8">
-                {['all', '2 BHK', '3 BHK'].map(type => (
-                  <button
-                    key={type}
-                    onClick={() => setPricingFilter(type)}
-                    className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${pricingFilter === type
-                      ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-105'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
-                  >
-                    {type === 'all' ? 'All Configurations' : type}
-                  </button>
-                ))}
-              </div>
-
-              <div className="overflow-hidden border border-gray-100 rounded-2xl shadow-sm">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr className="bg-gray-50/80 border-b border-gray-100">
-                      <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Type</th>
-                      <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Carpet Area</th>
-                      <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Price</th>
-                      <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-50">
-                    {filteredPricing.map((item, index) => (
-                      <tr key={index} className="hover:bg-blue-50/30 transition-colors group">
-                        <td className="px-6 py-5">
-                          <span className="font-bold text-gray-900 group-hover:text-brand-primary transition-colors">{item.type}</span>
-                        </td>
-                        <td className="px-6 py-5">
-                          <span className="text-gray-600 font-medium">{item.carpetArea}</span>
-                        </td>
-                        <td className="px-6 py-5">
-                          <span className="text-lg font-black text-brand-primary">{item.price}</span>
-                        </td>
-                        <td className="px-6 py-5 text-right">
-                          <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200 text-sm font-bold text-brand-primary hover:bg-brand-primary hover:text-white hover:border-transparent transition-all shadow-sm">
-                            <span>Price Breakup</span>
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-
-            {/* Amenities Section */}
-            <section id="amenities" className="bg-white border border-gray-200 rounded-lg p-8 shadow-sm scroll-mt-36">
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-bold text-brand-primary">Amenities</h2>
-              </div>
-
-              <div className="mb-8">
-                <h3 className="text-lg font-bold text-gray-800 mb-6 pb-2 border-b border-gray-100 italic">External Amenities</h3>
-
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-8 gap-x-4">
-                  {[
-                    { name: 'Swimming Pool', icon: '🏊' },
-                    { name: 'Club House', icon: '🏛️' },
-                    { name: 'Kids Play Area', icon: '🛝' },
-                    { name: 'Garden', icon: '🌳' },
-                    { name: 'Multi Purpose Court', icon: '🏀' },
-                    { name: 'Golf Course', icon: '⛳' },
-                    { name: 'Senior Citizen Area', icon: '👴' },
-                    { name: 'Squash Court', icon: '🎾' },
-                    { name: 'Pets Walking Area', icon: '🐾' },
-                    { name: 'Multi Purpose Lawn', icon: '🌱' },
-                    { name: 'Box Cricket', icon: '🏏' },
-                    { name: 'Library', icon: '📚' },
-                    { name: 'Open Gym', icon: '🏋️' },
-                    { name: 'Amphitheater', icon: '🎭' },
-                    { name: 'Banquet Hall', icon: '🎊' },
-                    { name: 'Toddlers Play Area', icon: '🧸' },
-                    { name: 'Seating Area', icon: '🪑' },
-                    { name: 'Creche Outdoor Play Area', icon: '🎈' },
-                    { name: 'Table Tennis', icon: '🏓' },
-                    { name: 'Pet Park', icon: '🐶' },
-                    { name: 'Indoor games', icon: '🎲' },
-                    { name: 'Star Gazing', icon: '✨' },
-                    { name: 'Badminton Court', icon: '🏸' },
-                    { name: 'Skating Ring', icon: '⛸️' },
-                    { name: 'Gymnasium', icon: '💪' },
-                    { name: 'Mini Theatre', icon: '🎬' },
-                    { name: 'Multi purpose hall', icon: '🏢' },
-                  ].map((amenity, index) => (
-                    <div key={index} className="flex items-center gap-3 group transition-all duration-300 hover:translate-x-1">
-                      <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-50 text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-colors border border-gray-100 text-xl shadow-sm">
-                        {/* Placeholder for SVG icons from the image - using high-quality emojis/font-based icons for now */}
-                        <span>{amenity.icon}</span>
-                      </div>
-                      <span className="text-sm font-medium text-gray-600 group-hover:text-brand-primary transition-colors">
-                        {amenity.name}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-
-            {/* Connectivity */}
-            <section id="connectivity" className="bg-white border border-gray-100 rounded-2xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] scroll-mt-36">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-brand-primary/10 rounded-xl flex items-center justify-center text-brand-primary">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Location & Connectivity</h2>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                <div>
-                  <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Site Address</h3>
-                  <div className="p-5 rounded-2xl bg-gray-50 border border-gray-100 flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-brand-primary shadow-sm">
+                  <div className="md:text-right">
+                    <p className="text-4xl font-black text-[#1a2234]">
+                      <span className="text-2xl font-bold mr-1">₹</span>
+                      {property.price ? (property.price / 10000000).toFixed(2) : "0.00"} Cr
+                    </p>
+                    <button className="mt-4 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#E8F5F1] text-[#2D9B7C] font-bold hover:bg-[#2D9B7C] hover:text-white transition-all group">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                      </svg>
+                      Share
+                    </button>
+                  </div>
+                </div>
+
+                {/* Bento Property Stats */}
+                <div className="grid grid-cols-3 gap-4 border-t border-gray-100 pt-6" id="overview">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-[#F0F5FA] flex items-center justify-center text-[#1a2234]">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-lg font-bold text-[#0D263B]">{property.bedrooms || 3} Beds</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-[#F0F5FA] flex items-center justify-center text-[#1a2234]">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                       </svg>
                     </div>
-                    <p className="text-gray-700 font-semibold leading-relaxed">
-                      {property.address || `${property.name}, ${property.location}, India`}
-                    </p>
+                    <div>
+                      <p className="text-lg font-bold text-[#0D263B]">{property.bathrooms || 2} Baths</p>
+                    </div>
                   </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-[#F0F5FA] flex items-center justify-center text-[#1a2234]">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-lg font-bold text-[#0D263B]">{property.area || 1200} sqft</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-                  <button className="mt-6 w-full py-4 rounded-xl bg-brand-primary text-white font-bold hover:bg-brand-primary-light transition-all shadow-lg shadow-brand-primary/10 flex items-center justify-center gap-2">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 7m0 10V7" />
+
+              {/* Highlights Section */}
+              <div id="highlights" className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 border-t-4 border-t-[#C5A028]">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-[#FFF9F0] flex items-center justify-center text-[#C5A028]">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
-                    <span>View on Google Maps</span>
-                  </button>
-                </div>
-
-                <div>
-                  <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Nearby Landmarks</h3>
-                  <div className="space-y-3">
-                    {(property.connectivity?.commute || [
-                      { name: 'Metro Station', distance: '1.2 km' },
-                      { name: 'Shopping Mall', distance: '2.5 km' },
-                      { name: 'Hospital', distance: '0.8 km' },
-                      { name: 'School', distance: '1.5 km' }
-                    ]).map((item, idx) => (
-                      <div key={idx} className="flex justify-between items-center p-4 rounded-xl bg-gray-50 border border-transparent hover:border-brand-primary/20 hover:bg-white transition-all group">
-                        <div className="flex items-center gap-3">
-                          <div className="w-2 h-2 rounded-full bg-brand-secondary group-hover:scale-150 transition-transform"></div>
-                          <span className="text-gray-700 font-bold">{item.name}</span>
-                        </div>
-                        <span className="px-3 py-1 rounded-full bg-white text-brand-primary text-xs font-black shadow-sm border border-gray-100">
-                          {item.distance}
-                        </span>
-                      </div>
-                    ))}
                   </div>
+                  <h2 className="text-2xl font-black text-[#0D263B]">Project <span className="text-[#C5A028]">Highlights</span></h2>
                 </div>
-              </div>
-            </section>
-
-            {/* About Developer */}
-            <section id="builder" className="bg-white border border-gray-100 rounded-2xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] scroll-mt-36">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-brand-secondary/10 rounded-xl flex items-center justify-center text-brand-secondary">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {displayedHighlights.map((highlight, idx) => (
+                    <div key={idx} className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors group">
+                      <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#C5A028] shrink-0 group-hover:scale-150 transition-transform"></div>
+                      <p className="text-gray-600 font-medium leading-relaxed italic">{highlight}</p>
+                    </div>
+                  ))}
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 tracking-tight">About Developer</h2>
+                {defaultHighlights.length > 5 && (
+                  <button
+                    onClick={() => setShowAllHighlights(!showAllHighlights)}
+                    className="mt-6 text-[#C5A028] font-bold text-sm hover:underline flex items-center gap-2"
+                  >
+                    {showAllHighlights ? 'Show Less' : `View All ${defaultHighlights.length} Highlights`}
+                    <svg className={`w-4 h-4 transition-transform ${showAllHighlights ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                )}
               </div>
 
-              <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-100 rounded-3xl p-8">
-                <div className="flex flex-col lg:flex-row gap-10 items-start">
-                  <div className="w-full lg:w-1/3 flex flex-col items-center">
-                    <div className="group relative w-full aspect-square max-w-[200px] mb-6">
-                      {developer?.logo ? (
-                        <div className="absolute inset-0 bg-white rounded-2xl shadow-xl flex items-center justify-center p-4 border border-gray-50">
-                          <img src={developer.logo} alt={developer.name} className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-500" />
+              {/* Accordion Sections */}
+              <div className="space-y-4">
+                {/* Property Detail Accordion */}
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden border-l-4 border-l-[#C5A028]">
+                  <button
+                    onClick={() => setOpenSection(openSection === 'detail' ? null : 'detail')}
+                    id="detail"
+                    className={`w-full flex items-center justify-between p-6 text-left transition-all ${openSection === 'detail' ? 'bg-[#1a2234] text-white' : 'hover:bg-gray-50 text-[#0D263B]'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${openSection === 'detail' ? 'bg-white/10 text-[#C5A028]' : 'bg-blue-50 text-[#1a2234]'}`}>
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-xl font-black">Property <span className={openSection === 'detail' ? 'text-[#C5A028]' : 'text-[#1a2234]'}>Detail</span></h2>
+                    </div>
+                    <svg className={`w-6 h-6 transition-transform ${openSection === 'detail' ? 'rotate-180 text-[#C5A028]' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {openSection === 'detail' && (
+                    <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                          <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Property ID</span>
+                          <span className="text-[#1a2234] font-black tracking-tight">HZ-{property._id.substring(property._id.length - 4).toUpperCase()}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                          <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Project Area</span>
+                          <span className="text-[#0D263B] font-black">{property.projectArea || "N/A"}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                          <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Storeys</span>
+                          <span className="text-[#0D263B] font-black">{property.storeys || "N/A"}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                          <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Bedrooms</span>
+                          <span className="text-[#0D263B] font-black">{property.bedrooms || 3}</span>
+                        </div>
+                        {property.projectReraNumber && (
+                          <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                            <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Project RERA</span>
+                            <span className="text-[#C5A028] font-black text-[10px]">{property.projectReraNumber}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                          <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Bathrooms</span>
+                          <span className="text-[#0D263B] font-black">{property.bathrooms || 2}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                          <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Status</span>
+                          <span className={`font-black px-3 py-1 rounded-lg text-[10px] uppercase tracking-tighter ${property.possessionStatus?.toLowerCase().includes('ready') ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                            {property.possessionStatus || (property.available ? "For Sale" : "Sold Out")}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                          <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Developer</span>
+                          <span className="text-[#1a2234] font-black">{property.developer}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                          <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Possession</span>
+                          <span className="text-[#0D263B] font-black">{property.possessionDate || "Expected 2024"}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                          <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Car Parking</span>
+                          <span className="text-[#0D263B] font-black">{property.facilities?.includes('Parking') ? 'Available' : 'Contact for Detail'}</span>
+                        </div>
+                        {property.advertiserReraNumber && (
+                          <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                            <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Adv. RERA</span>
+                            <span className="text-[#C5A028] font-black text-[10px]">{property.advertiserReraNumber}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Description Accordion */}
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden border-l-4 border-l-blue-100" id="about">
+                  <button
+                    onClick={() => setOpenSection(openSection === 'desc' ? null : 'desc')}
+                    className={`w-full flex items-center justify-between p-6 text-left transition-all ${openSection === 'desc' ? 'bg-[#1a2234] text-white' : 'hover:bg-gray-50 text-[#0D263B]'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${openSection === 'desc' ? 'bg-white/10 text-[#C5A028]' : 'bg-blue-50 text-[#1a2234]'}`}>
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+                        </svg>
+                      </div>
+                      <h2 className="text-xl font-black">Description</h2>
+                    </div>
+                    <svg className={`w-6 h-6 transition-transform ${openSection === 'desc' ? 'rotate-180 text-[#C5A028]' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {openSection === 'desc' && (
+                    <div className="p-8 font-medium">
+                      <p className="text-gray-600 leading-relaxed whitespace-pre-line first-letter:text-4xl first-letter:font-black first-letter:text-[#1a2234] first-letter:mr-3 first-letter:float-left">
+                        {property.description}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Amenities Accordion */}
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden border-l-4 border-l-[#2D9B7C]" id="amenities">
+                  <button
+                    onClick={() => setOpenSection(openSection === 'amenities' ? null : 'amenities')}
+                    className={`w-full flex items-center justify-between p-6 text-left transition-all ${openSection === 'amenities' ? 'bg-[#1a2234] text-white' : 'hover:bg-gray-50 text-[#0D263B]'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${openSection === 'amenities' ? 'bg-white/10 text-[#C5A028]' : 'bg-blue-50 text-[#1a2234]'}`}>
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-xl font-black">Amenities</h2>
+                    </div>
+                    <svg className={`w-6 h-6 transition-transform ${openSection === 'amenities' ? 'rotate-180 text-[#C5A028]' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {openSection === 'amenities' && (
+                    <div className="p-8">
+                      {amenitiesToShow.length > 0 ? (
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+                          {amenitiesToShow.map((amenity: any, index: number) => (
+                            <div key={index} className="flex items-center gap-4 group p-3 rounded-xl border border-gray-50 hover:border-[#C5A028]/30 hover:bg-gray-50 transition-all">
+                              <div className="w-8 h-8 rounded-full bg-[#E8F5F1] flex items-center justify-center text-[#2D9B7C] border border-[#2D9B7C]/20 shrink-0">
+                                <AmenityIcon name={typeof amenity === 'string' ? amenity : amenity.name} />
+                              </div>
+                              <span className="text-gray-700 text-sm font-bold tracking-tight">{typeof amenity === 'string' ? amenity : amenity.name}</span>
+                            </div>
+                          ))}
                         </div>
                       ) : (
-                        <div className="absolute inset-0 bg-[#1F4B6B] rounded-3xl shadow-xl flex items-center justify-center text-white text-6xl font-black group-hover:rotate-6 transition-transform duration-500">
-                          {developer?.name?.[0] || 'D'}
+                        <div className="text-center py-12">
+                          <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-4">
+                            <svg className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                            </svg>
+                          </div>
+                          <p className="text-gray-400 font-medium">No specific amenities listed for this property.</p>
                         </div>
                       )}
                     </div>
-                    <h3 className="text-2xl font-black text-gray-900 text-center mb-2">{developer?.name || property.developer}</h3>
-                    {developer?.establishedYear && (
-                      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 text-rose-600 text-xs font-black uppercase tracking-widest">
-                        <span>Established In {developer.establishedYear}</span>
+                  )}
+                </div>
+
+                {/* Pricing Accordion */}
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden border-l-4 border-l-blue-900" id="pricing">
+                  <button
+                    onClick={() => setOpenSection(openSection === 'pricing' ? null : 'pricing')}
+                    className={`w-full flex items-center justify-between p-6 text-left transition-all ${openSection === 'pricing' ? 'bg-[#1a2234] text-white' : 'hover:bg-gray-50 text-[#0D263B]'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${openSection === 'pricing' ? 'bg-white/10 text-[#C5A028]' : 'bg-blue-50 text-[#1a2234]'}`}>
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-xl font-black">Pricing <span className={openSection === 'pricing' ? 'text-[#C5A028]' : 'text-[#1a2234]'}>Grid</span></h2>
+                    </div>
+                    <svg className={`w-6 h-6 transition-transform ${openSection === 'pricing' ? 'rotate-180 text-[#C5A028]' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {openSection === 'pricing' && (
+                    <div className="p-0 border-t border-gray-100 overflow-x-auto">
+                      <table className="w-full text-left">
+                        <thead>
+                          <tr className="bg-gray-50/50 text-gray-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                            <th className="px-8 py-4">Configuration</th>
+                            <th className="px-8 py-4">Carpet Area</th>
+                            <th className="px-8 py-4 text-right">Investment</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-50">
+                          {(property.pricing?.length ? property.pricing : defaultPricing).map((item, index) => (
+                            <tr key={index} className="group hover:bg-blue-50/30 transition-colors">
+                              <td className="px-8 py-5 font-bold text-[#0D263B]">{item.type}</td>
+                              <td className="px-8 py-5 text-gray-500 font-medium">{item.carpetArea}</td>
+                              <td className="px-8 py-5 font-black text-[#1a2234] text-right">
+                                <span className="text-[#2D9B7C] tracking-tighter">{item.price}</span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+
+                {/* Location Accordion */}
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden border-l-4 border-l-blue-100" id="connectivity">
+                  <button
+                    onClick={() => setOpenSection(openSection === 'loc' ? null : 'loc')}
+                    className={`w-full flex items-center justify-between p-6 text-left transition-all ${openSection === 'loc' ? 'bg-[#1a2234] text-white' : 'hover:bg-gray-50 text-[#0D263B]'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${openSection === 'loc' ? 'bg-white/10 text-[#C5A028]' : 'bg-blue-50 text-[#1a2234]'}`}>
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-xl font-black">Location <span className={openSection === 'loc' ? 'text-[#C5A028]' : 'text-[#1a2234]'}>View</span></h2>
+                    </div>
+                    <svg className={`w-6 h-6 transition-transform ${openSection === 'loc' ? 'rotate-180 text-[#C5A028]' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {openSection === 'loc' && (
+                    <div className="p-8 space-y-8">
+                      <div>
+                        <p className="text-[#1a2234] font-black mb-4 uppercase text-[10px] tracking-[0.2em] flex items-center gap-2">
+                          Site Address
+                        </p>
+                        <div className="bg-blue-50/50 p-6 rounded-2xl border border-blue-100/50 text-[#0D263B] font-bold italic relative">
+                          <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-8 bg-blue-300 rounded-full"></div>
+                          "{property.address || `${property.name}, ${property.location}, India`}"
+                        </div>
+                      </div>
+                      <div className="space-y-8">
+                        {['commute', 'entertainment', 'essentials'].map((category) => {
+                          const items = property.connectivity?.[category as keyof typeof property.connectivity] || [];
+                          if (items.length === 0) return null;
+
+                          return (
+                            <div key={category}>
+                              <p className="text-[#1a2234] font-black mb-4 uppercase text-[10px] tracking-[0.2em] flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-[#C5A028]"></span>
+                                {category}
+                              </p>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {items.map((item, idx) => (
+                                  <div key={idx} className="flex justify-between items-center p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-[#C5A028]/30 transition-all group">
+                                    <div className="flex flex-col">
+                                      <span className="text-gray-500 font-bold text-xs uppercase tracking-wider">{item.name}</span>
+                                      {item.time && <span className="text-[10px] text-[#2D9B7C] font-bold italic">{item.time} away</span>}
+                                    </div>
+                                    <span className="text-[#1a2234] font-black text-sm bg-blue-50 px-4 py-1.5 rounded-xl border border-blue-100 group-hover:bg-[#C5A028] group-hover:text-[#1a2234] transition-colors">{item.distance}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Specifications Accordion */}
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden border-l-4 border-l-[#1a2234]">
+                  <button
+                    onClick={() => setOpenSection(openSection === 'specs' ? null : 'specs')}
+                    className={`w-full flex items-center justify-between p-6 text-left transition-all ${openSection === 'specs' ? 'bg-[#1a2234] text-white' : 'hover:bg-gray-50 text-[#0D263B]'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${openSection === 'specs' ? 'bg-white/10 text-[#C5A028]' : 'bg-blue-50 text-[#1a2234]'}`}>
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                      </div>
+                      <h2 className="text-xl font-black">Project <span className={openSection === 'specs' ? 'text-[#C5A028]' : 'text-[#1a2234]'}>Specifications</span></h2>
+                    </div>
+                    <svg className={`w-6 h-6 transition-transform ${openSection === 'specs' ? 'rotate-180 text-[#C5A028]' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {openSection === 'specs' && (
+                    <div className="p-8 space-y-10">
+                      {[
+                        { title: 'Flooring', data: property.specifications?.floor },
+                        { title: 'Fittings & Fixtures', data: property.specifications?.fitting },
+                        { title: 'Wall & Ceiling', data: property.specifications?.wallCeiling }
+                      ].map((spec, sidx) => {
+                        if (!spec.data || Object.keys(spec.data).length === 0) return null;
+                        return (
+                          <div key={sidx} className="relative">
+                            <h3 className="text-sm font-black text-[#1a2234] uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+                              <span className="w-8 h-px bg-[#C5A028]"></span>
+                              {spec.title}
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+                              {Object.entries(spec.data).map(([key, value], vidx) => (
+                                <div key={vidx} className="flex flex-col py-2 border-b border-gray-50">
+                                  <span className="text-gray-400 font-bold uppercase text-[9px] tracking-widest mb-1">{key}</span>
+                                  <span className="text-[#0D263B] font-bold text-sm tracking-tight">{value}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {(!property.specifications ||
+                        (!Object.keys(property.specifications.floor || {}).length &&
+                          !Object.keys(property.specifications.fitting || {}).length &&
+                          !Object.keys(property.specifications.wallCeiling || {}).length)) && (
+                          <div className="text-center py-6 text-gray-400 font-medium italic">
+                            Detailed specifications are available upon request.
+                          </div>
+                        )}
+                    </div>
+                  )}
+                </div>
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden border-l-4 border-l-[#C5A028]" id="faq">
+                  <button
+                    onClick={() => setOpenSection(openSection === 'faq' ? null : 'faq')}
+                    className={`w-full flex items-center justify-between p-6 text-left transition-all ${openSection === 'faq' ? 'bg-[#1a2234] text-white' : 'hover:bg-gray-50 text-[#0D263B]'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${openSection === 'faq' ? 'bg-white/10 text-[#C5A028]' : 'bg-blue-50 text-[#1a2234]'}`}>
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-xl font-black">Helpful <span className={openSection === 'faq' ? 'text-[#C5A028]' : 'text-[#1a2234]'}>FAQs</span></h2>
+                    </div>
+                    <svg className={`w-6 h-6 transition-transform ${openSection === 'faq' ? 'rotate-180 text-[#C5A028]' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {openSection === 'faq' && (
+                    <div className="p-8 space-y-6">
+                      {[
+                        { q: `What is the price of ${property.name}?`, a: `The starting price is ₹ ${property.price ? (property.price / 10000000).toFixed(2) : "0.00"} Cr.` },
+                        { q: `Where is it located?`, a: `It is prime located in ${property.location}.` },
+                        { q: `What is the possession status?`, a: `The project is currently ${property.possessionStatus || (property.available ? "Ready to Move" : "Under Construction")}.` }
+                      ].map((faq, idx) => (
+                        <div key={idx} className="group">
+                          <p className="font-black text-[#1a2234] mb-2 flex items-center gap-2">
+                            <span className="text-[#C5A028] text-lg">Q.</span>
+                            {faq.q}
+                          </p>
+                          <div className="pl-6 border-l-2 border-gray-100 group-hover:border-[#C5A028]/30 transition-colors">
+                            <p className="text-gray-500 text-sm leading-relaxed font-medium">{faq.a}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              {/* About Developer Section */}
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mt-6" id="builder">
+                <div className="flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
+                  <div className="shrink-0 flex justify-center w-full md:w-auto">
+                    <div className="w-24 h-24 rounded-2xl bg-[#1a2234] flex items-center justify-center text-white text-4xl font-black shadow-xl shadow-blue-900/10">
+                      {developer?.name?.[0] || property.developer?.[0]}
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-[#0D263B] mb-4">About {developer?.name || property.developer}</h3>
+                    <p className="text-gray-600 leading-relaxed italic font-medium">
+                      {developer?.description || `${property.developer} is a leading real estate developer known for high-quality residential projects and architectural excellence.`}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* RIGHT SIDEBAR */}
+            <div className="lg:col-span-4 space-y-6">
+              <div className="sticky top-24 space-y-6">
+                <ProjectContactSidebar />
+
+                {/* Mortgage Calculator Card */}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-xl bg-[#F0F5FA] flex items-center justify-center text-[#1a2234]">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-bold text-[#0D263B]">Mortgage Calculator</h3>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Sale Price (Cr)</label>
+                      <div className="relative">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">₹</span>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={salePrice}
+                          onChange={(e) => setSalePrice(Number(e.target.value))}
+                          className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border border-transparent focus:bg-white focus:border-blue-200 outline-none transition-all font-bold text-[#0D263B]"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Down Payment (Cr)</label>
+                      <div className="relative">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">₹</span>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={downPayment}
+                          onChange={(e) => setDownPayment(Number(e.target.value))}
+                          className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border border-transparent focus:bg-white focus:border-blue-200 outline-none transition-all font-bold text-[#0D263B]"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Term (Years)</label>
+                        <input
+                          type="number"
+                          value={loanTerm}
+                          onChange={(e) => setLoanTerm(Number(e.target.value))}
+                          className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-transparent focus:bg-white focus:border-blue-200 outline-none transition-all font-bold text-[#0D263B]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Rate (%)</label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          value={interestRate}
+                          onChange={(e) => setInterestRate(Number(e.target.value))}
+                          className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-transparent focus:bg-white focus:border-blue-200 outline-none transition-all font-bold text-[#0D263B]"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={calculateMortgage}
+                      className="w-full py-4 rounded-xl bg-[#1a2234] text-white font-bold hover:bg-[#0D263B] transition-all shadow-lg shadow-blue-900/10"
+                    >
+                      Calculate
+                    </button>
+
+                    {monthlyPayment !== null && (
+                      <div className="mt-6 p-4 rounded-xl bg-[#E8F5F1] border border-[#2D9B7C]/20 text-center">
+                        <p className="text-[#2D9B7C] text-sm font-bold uppercase tracking-widest mb-1">Monthly Payment</p>
+                        <p className="text-3xl font-black text-[#1a2234]">₹ {monthlyPayment.toLocaleString()}</p>
                       </div>
                     )}
                   </div>
-
-                  <div className="flex-1 space-y-6">
-                    <p className="text-gray-600 leading-relaxed text-lg font-medium italic">
-                      "{developer?.description || `${developer?.name || property.developer} is a reputed developer known for quality construction and timely delivery. They have transformed the skyline with their iconic projects.`}"
-                    </p>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm">
-                        <div className="text-xs font-bold text-gray-400 uppercase mb-1">Experience</div>
-                        <div className="text-2xl font-black text-[#1F4B6B]">15+ Years</div>
-                      </div>
-                      <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm">
-                        <div className="text-xs font-bold text-gray-400 uppercase mb-1">Projects</div>
-                        <div className="text-2xl font-black text-[#1F4B6B]">45+ Delivered</div>
-                      </div>
-                    </div>
-
-                    <button className="flex items-center gap-2 group text-brand-primary font-bold hover:gap-4 transition-all">
-                      <span>More about this developer</span>
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </button>
-                  </div>
                 </div>
               </div>
-            </section>
-
-            {/* FAQ Section */}
-            <section id="faq" className="bg-white border border-gray-100 rounded-2xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] scroll-mt-36">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-brand-secondary/10 rounded-xl flex items-center justify-center text-brand-secondary">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Frequently Asked Questions</h2>
-              </div>
-
-              <div className="space-y-4">
-                {[
-                  { q: `What is the pricing of ${property.name}?`, a: `The pricing starts from ₹ ${((property.price * 0.8) / 10000000).toFixed(2)} Cr for 2 BHK configurations.` },
-                  { q: `Where is ${property.name} located?`, a: `${property.name} is prime located in ${property.location}, offering excellent connectivity to key parts of the city.` },
-                  { q: `What is the possession status?`, a: `Currently, the project is ${property.available ? 'Ready to Move' : 'Under Construction'} with possession expected around ${property.possessionDate || 'December 2028'}.` },
-                  { q: `Is ${property.name} RERA registered?`, a: `Yes, ${property.name} is a RERA approved project. The project RERA number is ${property.projectReraNumber || 'P51900046369'}.` }
-                ].map((faq, idx) => (
-                  <div key={idx} className="border border-gray-100 rounded-2xl overflow-hidden group">
-                    <button
-                      onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
-                      className={`w-full flex items-center justify-between p-5 text-left transition-all ${expandedFaq === idx ? 'bg-blue-50/50' : 'bg-white hover:bg-gray-50'}`}
-                    >
-                      <span className={`font-bold text-lg ${expandedFaq === idx ? 'text-brand-primary' : 'text-gray-700'}`}>{faq.q}</span>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${expandedFaq === idx ? 'bg-brand-primary text-white rotate-180' : 'bg-gray-100 text-gray-400 group-hover:bg-gray-200'}`}>
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </div>
-                    </button>
-                    <div className={`transition-all duration-300 ease-in-out overflow-hidden ${expandedFaq === idx ? 'max-h-[200px] border-t border-gray-100' : 'max-h-0'}`}>
-                      <div className="p-5 text-gray-600 leading-relaxed font-medium">
-                        {faq.a}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-          </div>
-
-          {/* RIGHT SIDEBAR - Sticky */}
-          <div className="hidden lg:block w-[320px] 2xl:w-[350px] flex-shrink-0">
-            <div className="sticky top-24 h-fit">
-              <ProjectContactSidebar />
             </div>
           </div>
 
+          {/* Discover Latest Section (Full Width) */}
+          <div className="mt-16 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-2xl font-black text-[#0D263B]">Discover <span className="text-[#C5A028]">Latest</span></h3>
+              <div className="h-1.5 w-12 bg-[#C5A028] rounded-full"></div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredProperties.map((p) => (
+                <a
+                  key={p._id}
+                  href={`/view-project/${p._id}`}
+                  className="group block"
+                >
+                  <div className="relative h-64 rounded-2xl overflow-hidden mb-4">
+                    <img
+                      src={p.images?.[0] || '/placeholder.jpg'}
+                      alt={p.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                      <span className="text-white font-bold text-sm">View Project</span>
+                    </div>
+                  </div>
+                  <h4 className="font-bold text-[#0D263B] text-lg mb-1 group-hover:text-[#C5A028] transition-colors">{p.name}</h4>
+                  <p className="text-gray-400 text-sm font-medium mb-2">{p.location}</p>
+                  <p className="font-black text-[#2D9B7C] text-xl">₹ {(p.price / 10000000).toFixed(2)} Cr</p>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* Mobile Sticky Bottom Action Bar (Only visible on small screens where sidebars are hidden) */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-2xl z-50 flex gap-4">
-        <button className="flex-1 bg-white border border-[#1F4B6B] text-[#1F4B6B] py-3 rounded-lg font-bold">
-          Call Now
-        </button>
-        <button className="flex-1 bg-[#1F4B6B] text-white py-3 rounded-lg font-bold">
-          Book Visit
-        </button>
-      </div>
-
+      </main>
       <Footer />
     </div>
   );

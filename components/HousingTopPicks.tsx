@@ -49,7 +49,7 @@ export default function HousingTopPicks() {
             price: `₹${p.price.toLocaleString()}`,
             apartmentTypes: `${p.bedrooms || '2, 3'} BHK Apartments`,
             specialOffer: p.highlights?.[0] || null,
-            image: p.images[0] || "https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=1200&h=600&fit=crop"
+            image: p.images[0] || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=600&fit=crop"
           })));
         } else {
           // Fallback to demo data if no properties are marked as top picks
@@ -276,7 +276,7 @@ const DEMO_PROJECTS = [
     price: "₹86.65 L - 1.18 Cr",
     apartmentTypes: "2, 2.5, 3 BHK Apartments",
     specialOffer: "No EMI Till Possession",
-    image: "https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=1200&h=600&fit=crop"
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=600&fit=crop"
   },
   {
     id: 2,

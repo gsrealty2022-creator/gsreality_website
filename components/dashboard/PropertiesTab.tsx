@@ -67,6 +67,15 @@ interface Developer {
   name: string;
 }
 
+const ALL_AMENITIES = [
+  'Swimming Pool', 'Club House', 'Kids Play Area', 'Garden', 'Multi Purpose Court',
+  'Golf Course', 'Senior Citizen Area', 'Squash Court', 'Pets Walking Area',
+  'Multi Purpose Lawn', 'Box Cricket', 'Library', 'Open Gym', 'Amphitheater',
+  'Banquet Hall', 'Toddlers Play Area', 'Seating Area', 'Creche Outdoor Play Area',
+  'Table Tennis', 'Pet Park', 'Indoor games', 'Star Gazing', 'Badminton Court',
+  'Skating Ring', 'Gymnasium', 'Mini Theatre', 'Multi purpose hall'
+];
+
 export default function PropertiesTab() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [developers, setDevelopers] = useState<Developer[]>([]);
@@ -898,65 +907,93 @@ function PropertyFormModal({
           {/* Amenities Section */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Amenities</h3>
-            <div className="space-y-2">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Enter amenity (e.g., Swimming Pool)"
-                  value={amenityInput}
-                  onChange={(e) => setAmenityInput(e.target.value)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      if (amenityInput.trim()) {
-                        setFormData({
-                          ...formData,
-                          amenities: [...formData.amenities, amenityInput.trim()],
-                        });
-                        setAmenityInput('');
-                      }
-                    }
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (amenityInput.trim()) {
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+              {ALL_AMENITIES.map((amenity) => (
+                <label key={amenity} className="flex items-center gap-3 cursor-pointer group">
+                  <div className="relative flex items-center justify-center">
+                    <input
+                      type="checkbox"
+                      className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-gray-300 bg-white checked:bg-brand-primary checked:border-brand-primary transition-all"
+                      checked={formData.amenities.includes(amenity)}
+                      onChange={(e) => {
+                        const newAmenities = e.target.checked
+                          ? [...formData.amenities, amenity]
+                          : formData.amenities.filter((a) => a !== amenity);
+                        setFormData({ ...formData, amenities: newAmenities });
+                      }}
+                    />
+                    <svg className="absolute w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span className="text-xs font-bold text-gray-700 group-hover:text-brand-primary transition-colors uppercase tracking-tight">
+                    {amenity}
+                  </span>
+                </label>
+              ))}
+            </div>
+            {/* Option to add custom amenity if missing */}
+            <div className="mt-4 flex gap-2">
+              <input
+                type="text"
+                placeholder="Other amenity (not in list)"
+                value={amenityInput}
+                onChange={(e) => setAmenityInput(e.target.value)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (amenityInput.trim() && !formData.amenities.includes(amenityInput.trim())) {
                       setFormData({
                         ...formData,
                         amenities: [...formData.amenities, amenityInput.trim()],
                       });
                       setAmenityInput('');
                     }
-                  }}
-                  className="px-4 py-2 bg-brand-secondary text-white rounded-lg hover:bg-brand-secondary-dark transition"
-                >
-                  Add
-                </button>
-              </div>
-              {formData.amenities.length > 0 && (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {formData.amenities.map((amenity, index) => (
-                    <div key={index} className="flex items-center bg-gray-50 px-3 py-1 rounded">
-                      <span className="text-sm text-gray-700">{amenity}</span>
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (amenityInput.trim() && !formData.amenities.includes(amenityInput.trim())) {
+                    setFormData({
+                      ...formData,
+                      amenities: [...formData.amenities, amenityInput.trim()],
+                    });
+                    setAmenityInput('');
+                  }
+                }}
+                className="px-4 py-2 bg-brand-secondary text-white rounded-lg hover:bg-brand-secondary-dark transition"
+              >
+                Add Custom
+              </button>
+            </div>
+            {/* Show custom added amenities separately if they are not in the main list */}
+            {formData.amenities.filter(a => !ALL_AMENITIES.includes(a)).length > 0 && (
+              <div className="mt-4 p-4 bg-yellow-50/30 rounded-lg border border-yellow-100/50">
+                <p className="text-[10px] font-black text-brand-secondary uppercase tracking-widest mb-2">Custom Amenities</p>
+                <div className="flex flex-wrap gap-2">
+                  {formData.amenities.filter(a => !ALL_AMENITIES.includes(a)).map((amenity, index) => (
+                    <div key={index} className="flex items-center bg-white px-3 py-1 rounded-full border border-yellow-100 shadow-sm">
+                      <span className="text-xs font-bold text-gray-700">{amenity}</span>
                       <button
                         type="button"
                         onClick={() => {
                           setFormData({
                             ...formData,
-                            amenities: formData.amenities.filter((_, i) => i !== index),
+                            amenities: formData.amenities.filter((a) => a !== amenity),
                           });
                         }}
-                        className="text-brand-secondary hover:text-red-800 ml-2"
+                        className="text-brand-secondary hover:text-red-800 ml-2 font-black"
                       >
                         ×
                       </button>
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Facilities Section */}

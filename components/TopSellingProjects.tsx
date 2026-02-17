@@ -49,7 +49,7 @@ export default function TopSellingProjects() {
       price: "₹ 4.6Cr",
       typology: "2 - 4 Bed Apartment",
       location: "Goregaon West, Mumbai, Maharashtra",
-      image: "https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=800&h=600&fit=crop"
+      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop"
     },
     {
       id: 4,

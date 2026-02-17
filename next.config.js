@@ -27,6 +27,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'imgs.search.brave.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'hfy-factsheet-projects.s3.ap-south-1.amazonaws.com',
+      },
     ],
 
   },
