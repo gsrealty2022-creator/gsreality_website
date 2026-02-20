@@ -8,10 +8,10 @@ interface Property {
   title?: string;
   name?: string;
   location: string;
-  price: number;
-  bedrooms?: number;
-  bathrooms?: number;
-  area?: number;
+  price: string | number;
+  bedrooms?: string | number;
+  bathrooms?: string | number;
+  area?: string | number;
   image?: string;
   images?: string[];
   type?: string;
@@ -30,7 +30,13 @@ export default function PropertyCard({ property }: PropertyCardProps) {
     : property.image || "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&h=600&fit=crop";
   const displayType = property.subCategory || property.type || 'Property';
 
-  const formatPrice = (price: number) => {
+  const formatPrice = (price: string | number) => {
+    if (typeof price === 'string') {
+      if (price.toLowerCase().includes('cr') || price.toLowerCase().includes('lakh')) {
+        return `₹ ${price}`;
+      }
+      return `₹ ${price} Cr`;
+    }
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',

@@ -8,7 +8,7 @@ interface Property {
   name: string;
   developer: string;
   location: string;
-  price: number;
+  price: number | string;
   images: string[];
   showInTopPicks?: boolean;
   bedrooms?: number;
@@ -27,7 +27,7 @@ export default function HousingTopPicks() {
   const fetchTopPicks = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/projects');
+      const response = await fetch('/api/projects', { cache: 'no-store' });
       if (response.ok) {
         const data = await response.json();
         // Filter properties that should be shown in top picks
@@ -46,19 +46,20 @@ export default function HousingTopPicks() {
             ),
             projectName: p.name,
             location: p.location,
-            price: `₹${p.price.toLocaleString()}`,
+            price: typeof p.price === 'string'
+              ? (p.price.toLowerCase().includes('cr') || p.price.toLowerCase().includes('lakh') ? `₹ ${p.price}` : `₹ ${p.price} Cr`)
+              : `₹${p.price.toLocaleString()}`,
             apartmentTypes: `${p.bedrooms || '2, 3'} BHK Apartments`,
             specialOffer: p.highlights?.[0] || null,
             image: p.images[0] || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=600&fit=crop"
           })));
         } else {
-          // Fallback to demo data if no properties are marked as top picks
-          setProjects(DEMO_PROJECTS);
+          setProjects([]);
         }
       }
     } catch (error) {
       console.error('Error fetching top picks:', error);
-      setProjects(DEMO_PROJECTS);
+      setProjects([]);
     } finally {
       setLoading(false);
     }
@@ -262,50 +263,3 @@ export default function HousingTopPicks() {
   );
 }
 
-const DEMO_PROJECTS = [
-  {
-    id: 1,
-    developerName: "Ishtika Homes",
-    developerLogo: (
-      <div className="w-full h-full bg-white rounded-lg flex items-center justify-center shadow-md">
-        <span className="text-purple-600 font-bold text-xs">ISHIKA HOMES</span>
-      </div>
-    ),
-    projectName: "Ishtika Anahata",
-    location: "Samethanahalli, Bangalore East",
-    price: "₹86.65 L - 1.18 Cr",
-    apartmentTypes: "2, 2.5, 3 BHK Apartments",
-    specialOffer: "No EMI Till Possession",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=600&fit=crop"
-  },
-  {
-    id: 2,
-    developerName: "Rrl Builders And Developers Pvt Ltd",
-    developerLogo: (
-      <div className="w-full h-full bg-gray-800 rounded-lg flex items-center justify-center">
-        <span className="text-yellow-500 font-bold text-sm">RRL</span>
-      </div>
-    ),
-    projectName: "RRL Palm Altezze",
-    location: "Bangalore East, Bangalore",
-    price: "₹1.01 Cr - 1.3 Cr",
-    apartmentTypes: "2, 3 BHK Apartments",
-    specialOffer: null,
-    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=600&fit=crop"
-  },
-  {
-    id: 3,
-    developerName: "Prestige Group",
-    developerLogo: (
-      <div className="w-full h-full bg-white rounded-lg flex items-center justify-center shadow-md">
-        <span className="text-blue-600 font-bold text-xs">PRESTIGE</span>
-      </div>
-    ),
-    projectName: "Prestige Park Ridge",
-    location: "Whitefield, Bangalore",
-    price: "₹2.5 Cr - 4.5 Cr",
-    apartmentTypes: "3, 4 BHK Apartments",
-    specialOffer: "Early Bird Offer",
-    image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&h=600&fit=crop"
-  }
-];

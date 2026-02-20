@@ -42,10 +42,24 @@ export default function Hero() {
   const [maxPrice, setMaxPrice] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slides, setSlides] = useState<HeroSlide[]>(DEFAULT_SLIDES);
+  const [allLocations, setAllLocations] = useState<any[]>([]);
 
   useEffect(() => {
     fetchSlides();
+    fetchLocations();
   }, []);
+
+  const fetchLocations = async () => {
+    try {
+      const response = await fetch('/api/locations');
+      if (response.ok) {
+        const data = await response.json();
+        setAllLocations(data);
+      }
+    } catch (error) {
+      console.error('Error fetching locations:', error);
+    }
+  };
 
   const fetchSlides = async () => {
     try {
@@ -71,17 +85,20 @@ export default function Hero() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle search logic here
-    console.log('Search:', {
-      propertyType,
-      keyword,
-      location,
-      propertyTypeFilter,
-      beds,
-      area,
-      minPrice,
-      maxPrice
-    });
+
+    // Build query parameters
+    const params = new URLSearchParams();
+    if (propertyType) params.append('type', propertyType);
+    if (keyword) params.append('search', keyword);
+    if (location) params.append('filterLocation', location);
+    if (propertyTypeFilter) params.append('filterType', propertyTypeFilter);
+    if (beds) params.append('beds', beds);
+    if (area) params.append('area', area);
+    if (minPrice) params.append('minPrice', minPrice);
+    if (maxPrice) params.append('maxPrice', maxPrice);
+
+    // Redirect to properties page with search parameters
+    window.location.href = `/properties?${params.toString()}`;
   };
 
   return (
@@ -210,14 +227,15 @@ export default function Hero() {
                   <select
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="w-full px-2.5 py-2 text-xs border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary text-gray-900 appearance-none bg-white pr-7"
+                    className="w-full px-2.5 py-2 text-xs font-bold border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary text-gray-900 appearance-none bg-white pr-7"
                     style={{ backgroundImage: 'none' }}
                   >
                     <option value="">All Main Locations</option>
-                    <option value="downtown">Downtown</option>
-                    <option value="suburbs">Suburbs</option>
-                    <option value="riverside">Riverside</option>
-                    <option value="coastal">Coastal</option>
+                    {allLocations.map((loc) => (
+                      <option key={loc._id || loc.id} value={loc.id || loc._id}>
+                        {loc.name}
+                      </option>
+                    ))}
                   </select>
                   <div className="absolute right-2.5 top-1/2 transform -translate-y-1/2 pointer-events-none">
                     <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -309,8 +327,8 @@ export default function Hero() {
                   type="button"
                   onClick={() => setShowAdvanceSearch(!showAdvanceSearch)}
                   className={`flex items-center justify-center border border-blue-400 px-3 py-1.5 rounded-md text-xs font-semibold transition whitespace-nowrap ${showAdvanceSearch
-                      ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-inner'
-                      : 'bg-white text-blue-500 hover:bg-blue-50'
+                    ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-inner'
+                    : 'bg-white text-blue-500 hover:bg-blue-50'
                     }`}
                 >
                   <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

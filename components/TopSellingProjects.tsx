@@ -25,49 +25,6 @@ export default function TopSellingProjects() {
   const [isPaused, setIsPaused] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(true);
 
-  // Demo data (fallback)
-  const demoProjects = [
-    {
-      id: 1,
-      name: "Godrej Bliss Kandivali",
-      price: "₹ 1.62Cr - ₹ 2.33Cr",
-      typology: "2 - 3 Bed Apartment",
-      location: "Kandivali, Kandivali West, Mumbai",
-      image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop"
-    },
-    {
-      id: 2,
-      name: "Shapoorji Pallonji Sarova",
-      price: "₹ 1.66Cr - ₹ 3.22Cr",
-      typology: "1.5 - 3 Bed Apartment",
-      location: "Kandivali East Mumbai Maharashtra",
-      image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop"
-    },
-    {
-      id: 3,
-      name: "Kalpataru Radiance Goregaon",
-      price: "₹ 4.6Cr",
-      typology: "2 - 4 Bed Apartment",
-      location: "Goregaon West, Mumbai, Maharashtra",
-      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop"
-    },
-    {
-      id: 4,
-      name: "Lodha World One",
-      price: "₹ 12.5Cr",
-      typology: "3 - 5 Bed Apartment",
-      location: "Lower Parel, Mumbai",
-      image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop"
-    },
-    {
-      id: 5,
-      name: "Oberoi Realty Sky City",
-      price: "₹ 3.5Cr",
-      typology: "3 Bed Apartment",
-      location: "Borivali East, Mumbai",
-      image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop"
-    }
-  ];
 
   useEffect(() => {
     fetchProperties();
@@ -75,16 +32,19 @@ export default function TopSellingProjects() {
 
   const fetchProperties = async () => {
     try {
-      const response = await fetch('/api/projects');
+      const response = await fetch('/api/projects', { cache: 'no-store' });
       if (response.ok) {
         const data = await response.json();
-        const topSellingProperties = data.filter((prop: any) => prop.showInTopSelling === true);
-        const formatted: Property[] = topSellingProperties.map((prop: any) => ({
+        // User wants "Discover Latest Projects" to show "Newly Launched" projects
+        const newlyLaunchedProperties = data.filter((prop: any) => prop.showInNewlyLaunched === true);
+        const formatted: Property[] = newlyLaunchedProperties.map((prop: any) => ({
           _id: prop._id,
           id: prop._id,
           name: prop.name,
-          price: `₹ ${(prop.price / 10000000).toFixed(2)}Cr`,
-          typology: prop.bedrooms ? `${prop.bedrooms} - ${prop.bedrooms + 1} Bed Apartment` : 'Property',
+          price: typeof prop.price === 'string'
+            ? (prop.price.toLowerCase().includes('cr') ? `₹ ${prop.price}` : `₹ ${prop.price} Cr`)
+            : `₹ ${(prop.price / 10000000).toFixed(2)}Cr`,
+          typology: prop.bedrooms ? `${prop.bedrooms} Bed Apartment` : 'Property',
           location: prop.location,
           image: prop.images && prop.images.length > 0 ? prop.images[0] : "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop"
         }));
@@ -97,9 +57,7 @@ export default function TopSellingProjects() {
     }
   };
 
-  const originalProjects = databaseProperties.length >= 3
-    ? databaseProperties
-    : [...databaseProperties, ...demoProjects].slice(0, Math.max(databaseProperties.length, demoProjects.length));
+  const originalProjects = databaseProperties;
 
   // Clone items for infinite loop: Original + first 3
   const projects = [...originalProjects, ...originalProjects.slice(0, 3)];
@@ -139,6 +97,8 @@ export default function TopSellingProjects() {
       setCurrentIndex(0);
     }
   };
+
+  if (!loading && originalProjects.length === 0) return null;
 
   return (
     <section className="py-24 bg-white overflow-hidden">

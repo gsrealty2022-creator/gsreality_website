@@ -73,8 +73,10 @@ export default function NewlyLaunchedProjects() {
           _id: prop._id,
           id: prop._id,
           name: prop.name,
-          price: `₹ ${(prop.price / 10000000).toFixed(1)}Cr${prop.price > 10000000 ? ` - ₹ ${((prop.price * 1.5) / 10000000).toFixed(1)}Cr` : ''}`,
-          typology: prop.bedrooms ? `${prop.bedrooms} - ${prop.bedrooms + 1} Bed Apartment` : 'Property',
+          price: typeof prop.price === 'string'
+            ? (prop.price.toLowerCase().includes('cr') ? `₹ ${prop.price}` : `₹ ${prop.price} Cr`)
+            : `₹ ${(prop.price / 10000000).toFixed(1)}Cr${prop.price > 10000000 ? ` - ₹ ${((prop.price * 1.5) / 10000000).toFixed(1)}Cr` : ''}`,
+          typology: prop.bedrooms ? `${prop.bedrooms} Bed Apartment` : 'Property',
           location: prop.location,
           image: prop.images && prop.images.length > 0 ? prop.images[0] : "https://images.unsplash.com/photo-1600585154084-4e5fe7c39198?w=800&h=600&fit=crop"
         }));

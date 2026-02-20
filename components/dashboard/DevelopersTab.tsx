@@ -11,6 +11,8 @@ interface Developer {
   establishedYear?: number;
   totalProjects?: number;
   rating?: number;
+  isResidential?: boolean;
+  isCommercial?: boolean;
 }
 
 export default function DevelopersTab() {
@@ -171,6 +173,19 @@ export default function DevelopersTab() {
                 {developer.totalProjects && <span>{developer.totalProjects} Projects</span>}
               </div>
 
+              <div className="flex flex-wrap gap-2 mb-4">
+                {developer.isResidential && (
+                  <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full uppercase tracking-wider">
+                    Residential
+                  </span>
+                )}
+                {developer.isCommercial && (
+                  <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-[10px] font-bold rounded-full uppercase tracking-wider">
+                    Commercial
+                  </span>
+                )}
+              </div>
+
               <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
                 {developer.website ? (
                   <a
@@ -266,6 +281,8 @@ function DeveloperFormModal({
     establishedYear: developer?.establishedYear || '',
     totalProjects: developer?.totalProjects || '',
     rating: developer?.rating || 5,
+    isResidential: developer?.isResidential ?? false,
+    isCommercial: developer?.isCommercial ?? false,
   });
   const [submitting, setSubmitting] = useState(false);
   const [uploadMethod, setUploadMethod] = useState<'url' | 'file'>('url');
@@ -361,8 +378,8 @@ function DeveloperFormModal({
                   type="button"
                   onClick={() => setUploadMethod('url')}
                   className={`px-3 py-1 text-xs font-semibold rounded transition-all ${uploadMethod === 'url'
-                      ? 'bg-white text-brand-primary shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
+                    ? 'bg-white text-brand-primary shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
                     }`}
                 >
                   URL
@@ -371,8 +388,8 @@ function DeveloperFormModal({
                   type="button"
                   onClick={() => setUploadMethod('file')}
                   className={`px-3 py-1 text-xs font-semibold rounded transition-all ${uploadMethod === 'file'
-                      ? 'bg-white text-brand-primary shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
+                    ? 'bg-white text-brand-primary shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
                     }`}
                 >
                   Upload File
@@ -509,6 +526,35 @@ function DeveloperFormModal({
               </div>
             </div>
             <p className="text-xs text-gray-500 mt-1">Default: 5 stars (can be changed later)</p>
+          </div>
+
+          <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+            <label className="block text-sm font-bold text-gray-700 mb-3">
+              Developer Categorization
+            </label>
+            <div className="flex flex-wrap gap-6">
+              <label className="flex items-center cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={formData.isResidential}
+                  onChange={(e) => setFormData({ ...formData, isResidential: e.target.checked })}
+                  className="w-5 h-5 text-brand-primary border-gray-300 rounded focus:ring-brand-primary transition-all cursor-pointer"
+                />
+                <span className="ml-3 text-sm font-bold text-gray-700 group-hover:text-brand-primary transition-colors">Residential Developer</span>
+              </label>
+              <label className="flex items-center cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={formData.isCommercial}
+                  onChange={(e) => setFormData({ ...formData, isCommercial: e.target.checked })}
+                  className="w-5 h-5 text-brand-primary border-gray-300 rounded focus:ring-brand-primary transition-all cursor-pointer"
+                />
+                <span className="ml-3 text-sm font-bold text-gray-700 group-hover:text-brand-primary transition-colors">Commercial Developer</span>
+              </label>
+            </div>
+            <p className="text-[10px] text-gray-400 mt-3 font-medium italic">
+              * This helps users find this developer when searching by project type on the homepage.
+            </p>
           </div>
 
           <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">

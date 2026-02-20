@@ -6,12 +6,13 @@ interface Property {
   _id: string;
   name: string;
   description: string;
-  price: number;
+  price: string | number;
   developer: string;
   location: string;
-  bedrooms?: number;
-  bathrooms?: number;
-  area?: number;
+  bedrooms?: string | number;
+  bathrooms?: string | number;
+  area?: string | number;
+  carParking?: string;
   available: boolean;
   featured?: boolean;
   images: string[];
@@ -65,6 +66,8 @@ interface Location {
 interface Developer {
   _id: string;
   name: string;
+  isResidential?: boolean;
+  isCommercial?: boolean;
 }
 
 const ALL_AMENITIES = [
@@ -375,6 +378,7 @@ function PropertyFormModal({
       essentials: [],
     },
     type: property?.type || 'apartment',
+    carParking: property?.carParking || '',
   });
 
   // State for managing dynamic inputs
@@ -400,19 +404,14 @@ function PropertyFormModal({
       alert('Please enter a description');
       return;
     }
-    // Price validation - check if pricing array has entries or set default
-    if ((!formData.price || formData.price <= 0) && (!formData.pricing || formData.pricing.length === 0)) {
-      alert('Please add at least one pricing entry in the Pricing & Floor Plans section');
+    // Price validation - check if price or pricing has entries
+    if (!formData.price && (!formData.pricing || formData.pricing.length === 0)) {
+      alert('Please enter a price or add pricing entries');
       return;
     }
     // Set default price from first pricing entry if price is not set
-    if ((!formData.price || formData.price <= 0) && formData.pricing && formData.pricing.length > 0) {
-      // Extract numeric value from first pricing entry (remove currency symbols)
-      const firstPrice = formData.pricing[0].price.replace(/[₹,\s]/g, '');
-      const numericPrice = parseFloat(firstPrice) || 0;
-      if (numericPrice > 0) {
-        formData.price = numericPrice;
-      }
+    if (!formData.price && formData.pricing && formData.pricing.length > 0) {
+      formData.price = formData.pricing[0].price;
     }
     if (!formData.developer.trim()) {
       alert('Please select a developer');
@@ -435,24 +434,13 @@ function PropertyFormModal({
         : '/api/projects';
       const method = property ? 'PUT' : 'POST';
 
-      // Extract price from pricing array if price is not set
-      let finalPrice = formData.price;
-      if ((!finalPrice || finalPrice <= 0) && formData.pricing && formData.pricing.length > 0) {
-        // Extract numeric value from first pricing entry
-        const firstPrice = formData.pricing[0].price.replace(/[₹,\sCrLakh]/gi, '');
-        const numericPrice = parseFloat(firstPrice) || 0;
-        if (numericPrice > 0) {
-          finalPrice = numericPrice;
-        }
-      }
-
       // Prepare data for API
       const submitData = {
         ...formData,
-        price: finalPrice > 0 ? parseFloat(finalPrice.toString()) : 0,
-        bedrooms: formData.bedrooms ? parseInt(formData.bedrooms.toString()) : undefined,
-        bathrooms: formData.bathrooms ? parseInt(formData.bathrooms.toString()) : undefined,
-        area: formData.area ? parseInt(formData.area.toString()) : undefined,
+        price: String(formData.price),
+        bedrooms: formData.bedrooms ? String(formData.bedrooms) : undefined,
+        bathrooms: formData.bathrooms ? String(formData.bathrooms) : undefined,
+        area: formData.area ? String(formData.area) : undefined,
       };
 
       const response = await fetch(url, {
@@ -585,35 +573,46 @@ function PropertyFormModal({
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Property Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Sale Price *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g., 5.5 - 6.0 Cr"
+                  value={formData.price}
+                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
+                />
+              </div>
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Bedrooms</label>
                 <input
-                  type="number"
-                  min="0"
+                  type="text"
+                  placeholder="e.g., 3 or 2-3 BHK"
                   value={formData.bedrooms}
-                  onChange={(e) => setFormData({ ...formData, bedrooms: parseInt(e.target.value) })}
+                  onChange={(e) => setFormData({ ...formData, bedrooms: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Bathrooms</label>
                 <input
-                  type="number"
-                  min="0"
+                  type="text"
+                  placeholder="e.g., 2 or 2-3"
                   value={formData.bathrooms}
-                  onChange={(e) => setFormData({ ...formData, bathrooms: parseInt(e.target.value) })}
+                  onChange={(e) => setFormData({ ...formData, bathrooms: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Area (sqft)</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={formData.area}
-                  onChange={(e) => setFormData({ ...formData, area: parseInt(e.target.value) })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
-                />
-              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Total Area</label>
+              <input
+                type="text"
+                placeholder="e.g., 1200 - 1500 sqft"
+                value={formData.area}
+                onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent text-gray-900 bg-white"
+              />
             </div>
           </div>
 
@@ -649,7 +648,7 @@ function PropertyFormModal({
                   onChange={(e) => setFormData({ ...formData, showInNewlyLaunched: e.target.checked })}
                   className="w-4 h-4 text-brand-secondary border-gray-300 rounded focus:ring-brand-primary"
                 />
-                <span className="ml-2 text-sm text-gray-700 font-medium">Show in Newly Launched Projects</span>
+                <span className="ml-2 text-sm text-gray-700 font-medium">Show in Discover Section (Newly Launched)</span>
               </label>
               <label className="flex items-center">
                 <input
@@ -1490,8 +1489,8 @@ function PropertyFormModal({
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
 

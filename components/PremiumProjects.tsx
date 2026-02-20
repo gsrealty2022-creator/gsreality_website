@@ -23,76 +23,27 @@ export default function PremiumProjects() {
   const [databaseProperties, setDatabaseProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Demo data (fallback)
-  const demoProjects = [
-    {
-      id: 1,
-      name: "LODHA UPPER THANE",
-      price: "₹ 2.5Cr - ₹ 4.8Cr",
-      typology: "2 - 4 Bed Apartment",
-      location: "Thane, Maharashtra",
-      description: "Luxury living spaces with world-class amenities and modern architecture.",
-      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-    },
-    {
-      id: 2,
-      name: "PRESTIGE PARK RIDGE",
-      price: "₹ 3.2Cr - ₹ 5.5Cr",
-      typology: "3 - 5 Bed Apartment",
-      location: "Whitefield, Bangalore",
-      description: "Tailored enclosures engineered for durability, player safety, and spectator visibility.",
-      image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-    },
-    {
-      id: 3,
-      name: "DLF CAMELIAS",
-      price: "₹ 8.5Cr - ₹ 12Cr",
-      typology: "4 - 5 Bed Luxury Apartment",
-      location: "Gurgaon, Haryana",
-      description: "Premium residential spaces designed for exceptional living experiences.",
-      image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-    },
-    {
-      id: 4,
-      name: "GODREJ BLISS",
-      price: "₹ 1.8Cr - ₹ 3.2Cr",
-      typology: "2 - 3 Bed Apartment",
-      location: "Mumbai, Maharashtra",
-      description: "Modern living spaces with smart home features and sustainable design.",
-      image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-    },
-    {
-      id: 5,
-      name: "KALPATARU RADIANCE",
-      price: "₹ 4.6Cr - ₹ 7.2Cr",
-      typology: "3 - 4 Bed Apartment",
-      location: "Goregaon, Mumbai",
-      description: "Secure and elegant residential complexes with comprehensive amenities.",
-      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-    }
-  ];
-
   useEffect(() => {
     fetchProperties();
   }, []);
 
   const fetchProperties = async () => {
     try {
-      const response = await fetch('/api/projects');
+      const response = await fetch('/api/projects', { cache: 'no-store' });
       if (response.ok) {
         const data = await response.json();
-        // Filter properties that should be shown in Premium Projects
         const premiumProperties = data.filter((prop: any) => prop.showInPremium === true);
-        // Convert database properties to display format
         const formatted: Property[] = premiumProperties.slice(0, 5).map((prop: any) => ({
           _id: prop._id,
           id: prop._id,
           name: prop.name.toUpperCase(),
-          price: `₹ ${(prop.price / 10000000).toFixed(1)}Cr${prop.price > 10000000 ? ` - ₹ ${((prop.price * 1.5) / 10000000).toFixed(1)}Cr` : ''}`,
-          typology: prop.bedrooms ? `${prop.bedrooms} - ${prop.bedrooms + 1} Bed Apartment` : 'Property',
+          price: typeof prop.price === 'string'
+            ? (prop.price.toLowerCase().includes('cr') ? `₹ ${prop.price}` : `₹ ${prop.price} Cr`)
+            : `₹ ${(prop.price / 10000000).toFixed(1)}Cr${prop.price > 10000000 ? ` - ₹ ${((prop.price * 1.5) / 10000000).toFixed(1)}Cr` : ''}`,
+          typology: prop.bedrooms ? `${prop.bedrooms} Bed Apartment` : 'Property',
           location: prop.location,
           description: prop.description || "Premium property with modern amenities and excellent location.",
-          image: prop.images && prop.images.length > 0 ? prop.images[0] : "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          image: prop.images && prop.images.length > 0 ? prop.images[0] : "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop"
         }));
         setDatabaseProperties(formatted);
       }
@@ -103,16 +54,14 @@ export default function PremiumProjects() {
     }
   };
 
-  // Merge database properties with demo data (database first, then demo)
-  const allProjects = [
-    ...databaseProperties,
-    ...demoProjects.slice(databaseProperties.length)
-  ].slice(0, 5);
+  const allProjects = databaseProperties;
 
   // Top row projects (2 large cards)
   const topProjects = allProjects.slice(0, 2);
   // Bottom row projects (3 smaller cards)
   const bottomProjects = allProjects.slice(2, 5);
+
+  if (!loading && allProjects.length === 0) return null;
 
   return (
     <section className="py-24 bg-brand-primary text-white">
@@ -156,11 +105,15 @@ export default function PremiumProjects() {
                     </h3>
                     {/* Red Ray - Appears on Hover */}
                     <div className="h-1 bg-brand-secondary w-0 group-hover:w-full transition-all duration-500 ease-out mb-3"></div>
-                    {project.description && (
-                      <p className="text-white/90 text-sm md:text-base max-w-md leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                        {project.description}
-                      </p>
-                    )}
+
+                    {/* Location on Hover */}
+                    <p className="text-white/90 text-sm md:text-base max-w-md font-bold leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex items-center">
+                      <svg className="w-5 h-5 mr-2 text-brand-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      {project.location}
+                    </p>
                   </div>
 
                   {/* Bottom - Project Details */}
@@ -168,7 +121,6 @@ export default function PremiumProjects() {
                     <div className="text-white space-y-2">
                       <div className="text-lg font-semibold">{project.price}</div>
                       <div className="text-sm">{project.typology}</div>
-                      <div className="text-sm">{project.location}</div>
                     </div>
                   </div>
                 </div>
@@ -205,11 +157,15 @@ export default function PremiumProjects() {
                     </h3>
                     {/* Red Ray - Appears on Hover */}
                     <div className="h-1 bg-brand-secondary w-0 group-hover:w-full transition-all duration-500 ease-out mb-3"></div>
-                    {project.description && (
-                      <p className="text-white/90 text-xs md:text-sm max-w-xs leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-700 line-clamp-2">
-                        {project.description}
-                      </p>
-                    )}
+
+                    {/* Location on Hover */}
+                    <p className="text-white/90 text-xs md:text-sm max-w-xs font-bold leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex items-center">
+                      <svg className="w-4 h-4 mr-1.5 text-brand-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      {project.location}
+                    </p>
                   </div>
 
                   {/* Bottom - Project Details */}
@@ -217,7 +173,6 @@ export default function PremiumProjects() {
                     <div className="text-white space-y-1">
                       <div className="text-base font-semibold">{project.price}</div>
                       <div className="text-xs">{project.typology}</div>
-                      <div className="text-xs">{project.location}</div>
                     </div>
                   </div>
                 </div>
@@ -229,4 +184,3 @@ export default function PremiumProjects() {
     </section>
   );
 }
-

@@ -31,6 +31,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'hfy-factsheet-projects.s3.ap-south-1.amazonaws.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'newprojects.99acres.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.staticmb.com',
+      },
     ],
 
   },

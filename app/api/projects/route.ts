@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
       connectivity,
       locationIds,
       type,
+      carParking,
     } = body;
 
     // Validate required fields with specific error messages
@@ -131,12 +132,13 @@ export async function POST(request: NextRequest) {
     const property = {
       name,
       description,
-      price: parseFloat(price),
+      price: String(price),
       developer,
       location,
-      bedrooms: bedrooms ? parseInt(bedrooms) : undefined,
-      bathrooms: bathrooms ? parseInt(bathrooms) : undefined,
-      area: area ? parseInt(area) : undefined,
+      bedrooms: bedrooms ? String(bedrooms) : undefined,
+      bathrooms: bathrooms ? String(bathrooms) : undefined,
+      area: area ? String(area) : undefined,
+      carParking: carParking || undefined,
       available: available !== false,
       images: uploadedImages,
       videos: uploadedVideos.length > 0 ? uploadedVideos : undefined,

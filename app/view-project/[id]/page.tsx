@@ -12,12 +12,13 @@ interface Property {
   _id: string;
   name: string;
   description: string;
-  price: number;
+  price: string | number;
   developer: string;
   location: string;
-  bedrooms?: number;
-  bathrooms?: number;
-  area?: number;
+  bedrooms?: string | number;
+  bathrooms?: string | number;
+  area?: string | number;
+  carParking?: string;
   available: boolean;
   images: string[];
   videos?: string[];
@@ -77,6 +78,27 @@ export default function PropertyDetailsPage() {
   const [openSection, setOpenSection] = useState<string | null>('detail');
   const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
 
+  // Helper to format specification labels
+  const formatSpecLabel = (label: string) => {
+    const mapping: { [key: string]: string } = {
+      'LIVINGDINING': 'Living & Dining',
+      'BATHROOMUTILITY': 'Bathroom & Utility',
+      'WALLSCEILING': 'Walls & Ceiling',
+      'MASTERBEDROOM': 'Master Bedroom',
+      'KITCHEN': 'Kitchen',
+      'BALCONY': 'Balcony',
+      'TOILETS': 'Toilets',
+      'EXTERNALPAINT': 'External Paint',
+      'ELECTRICAL': 'Electrical',
+      'PLUMBING': 'Plumbing',
+      'STRUCTURE': 'Structure',
+      'DOOR': 'Door',
+      'WINDOWS': 'Windows',
+      'FITTINGS': 'Fittings'
+    };
+    return mapping[label.toUpperCase()] || label;
+  };
+
   // Mortgage Calculator State
   const [salePrice, setSalePrice] = useState<number>(0);
   const [downPayment, setDownPayment] = useState<number>(0);
@@ -127,9 +149,12 @@ export default function PropertyDetailsPage() {
         setFeaturedProperties(allData.filter((p: any) => p._id !== params.id).slice(0, 4));
       }
 
-      // Initialize mortgage calculator with property price in Crores
+      // Initialize mortgage calculator with property price (try to extract numeric value)
       if (data.price) {
-        const priceInCr = Number((data.price / 10000000).toFixed(2));
+        // Find the first number in the string (e.g., "5.52" from "5.52 - 6 Cr")
+        const priceMatch = String(data.price).match(/(\d+(\.\d+)?)/);
+        const priceInCr = priceMatch ? parseFloat(priceMatch[0]) : 0;
+
         setSalePrice(priceInCr);
         setDownPayment(Number((priceInCr * 0.2).toFixed(2))); // Default 20% down, rounded to 2 decimals
       }
@@ -415,8 +440,8 @@ export default function PropertyDetailsPage() {
 
   // Default pricing data
   const defaultPricing = property.pricing || [
-    { type: '2 BHK', carpetArea: `${property.area ? Math.floor(property.area * 0.6) : 687} Sq.ft`, price: `₹ ${((property.price * 0.8) / 10000000).toFixed(2)} Cr` },
-    { type: '3 BHK', carpetArea: `${property.area || 1041} Sq.ft`, price: `₹ ${(property.price / 10000000).toFixed(2)} Cr` },
+    { type: '2 BHK', carpetArea: `${property.area ? Math.floor(Number(property.area) * 0.6) : 687} Sq.ft`, price: `₹ ${((Number(property.price) * 0.8) / 10000000).toFixed(2)} Cr` },
+    { type: '3 BHK', carpetArea: `${property.area || 1041} Sq.ft`, price: `₹ ${(Number(property.price) / 10000000).toFixed(2)} Cr` },
   ];
 
   const filteredPricing = pricingFilter === 'all'
@@ -507,7 +532,7 @@ export default function PropertyDetailsPage() {
                   <div className="md:text-right">
                     <p className="text-4xl font-black text-[#1a2234]">
                       <span className="text-2xl font-bold mr-1">₹</span>
-                      {property.price ? (property.price / 10000000).toFixed(2) : "0.00"} Cr
+                      {property.price} <span className="text-2xl font-bold ml-1">Cr</span>
                     </p>
                     <button className="mt-4 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#E8F5F1] text-[#2D9B7C] font-bold hover:bg-[#2D9B7C] hover:text-white transition-all group">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -610,10 +635,6 @@ export default function PropertyDetailsPage() {
                     <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
                       <div className="space-y-4">
                         <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                          <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Property ID</span>
-                          <span className="text-[#1a2234] font-black tracking-tight">HZ-{property._id.substring(property._id.length - 4).toUpperCase()}</span>
-                        </div>
-                        <div className="flex justify-between items-center py-3 border-b border-gray-100">
                           <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Project Area</span>
                           <span className="text-[#0D263B] font-black">{property.projectArea || "N/A"}</span>
                         </div>
@@ -628,7 +649,7 @@ export default function PropertyDetailsPage() {
                         {property.projectReraNumber && (
                           <div className="flex justify-between items-center py-3 border-b border-gray-100">
                             <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Project RERA</span>
-                            <span className="text-[#C5A028] font-black text-[10px]">{property.projectReraNumber}</span>
+                            <span className="text-[#C5A028] font-black text-sm">{property.projectReraNumber}</span>
                           </div>
                         )}
                       </div>
@@ -651,14 +672,10 @@ export default function PropertyDetailsPage() {
                           <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Possession</span>
                           <span className="text-[#0D263B] font-black">{property.possessionDate || "Expected 2024"}</span>
                         </div>
-                        <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                          <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Car Parking</span>
-                          <span className="text-[#0D263B] font-black">{property.facilities?.includes('Parking') ? 'Available' : 'Contact for Detail'}</span>
-                        </div>
                         {property.advertiserReraNumber && (
                           <div className="flex justify-between items-center py-3 border-b border-gray-100">
                             <span className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Adv. RERA</span>
-                            <span className="text-[#C5A028] font-black text-[10px]">{property.advertiserReraNumber}</span>
+                            <span className="text-[#C5A028] font-black text-sm">{property.advertiserReraNumber}</span>
                           </div>
                         )}
                       </div>
@@ -888,7 +905,7 @@ export default function PropertyDetailsPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
                               {Object.entries(spec.data).map(([key, value], vidx) => (
                                 <div key={vidx} className="flex flex-col py-2 border-b border-gray-50">
-                                  <span className="text-gray-400 font-bold uppercase text-[9px] tracking-widest mb-1">{key}</span>
+                                  <span className="text-gray-400 font-bold uppercase text-[9px] tracking-widest mb-1">{formatSpecLabel(key)}</span>
                                   <span className="text-[#0D263B] font-bold text-sm tracking-tight">{value}</span>
                                 </div>
                               ))}
@@ -927,7 +944,7 @@ export default function PropertyDetailsPage() {
                   {openSection === 'faq' && (
                     <div className="p-8 space-y-6">
                       {[
-                        { q: `What is the price of ${property.name}?`, a: `The starting price is ₹ ${property.price ? (property.price / 10000000).toFixed(2) : "0.00"} Cr.` },
+                        { q: `What is the price of ${property.name}?`, a: `The starting price is ₹ ${property.price} Cr.` },
                         { q: `Where is it located?`, a: `It is prime located in ${property.location}.` },
                         { q: `What is the possession status?`, a: `The project is currently ${property.possessionStatus || (property.available ? "Ready to Move" : "Under Construction")}.` }
                       ].map((faq, idx) => (
@@ -949,9 +966,19 @@ export default function PropertyDetailsPage() {
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mt-6" id="builder">
                 <div className="flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
                   <div className="shrink-0 flex justify-center w-full md:w-auto">
-                    <div className="w-24 h-24 rounded-2xl bg-[#1a2234] flex items-center justify-center text-white text-4xl font-black shadow-xl shadow-blue-900/10">
-                      {developer?.name?.[0] || property.developer?.[0]}
-                    </div>
+                    {developer?.logo ? (
+                      <div className="w-24 h-24 rounded-2xl bg-white border border-gray-100 shadow-xl shadow-blue-900/10 overflow-hidden flex items-center justify-center p-2">
+                        <img
+                          src={developer.logo}
+                          alt={developer.name}
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-24 h-24 rounded-2xl bg-[#1a2234] flex items-center justify-center text-white text-4xl font-black shadow-xl shadow-blue-900/10">
+                        {developer?.name?.[0] || property.developer?.[0]}
+                      </div>
+                    )}
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold text-[#0D263B] mb-4">About {developer?.name || property.developer}</h3>
@@ -1075,7 +1102,7 @@ export default function PropertyDetailsPage() {
                   </div>
                   <h4 className="font-bold text-[#0D263B] text-lg mb-1 group-hover:text-[#C5A028] transition-colors">{p.name}</h4>
                   <p className="text-gray-400 text-sm font-medium mb-2">{p.location}</p>
-                  <p className="font-black text-[#2D9B7C] text-xl">₹ {(p.price / 10000000).toFixed(2)} Cr</p>
+                  <p className="font-black text-[#2D9B7C] text-xl">₹ {p.price} Cr</p>
                 </a>
               ))}
             </div>

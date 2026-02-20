@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
   try {
     const db = await getDatabase();
     const developers = await db.collection('developers').find({}).sort({ createdAt: -1 }).toArray();
-    
+
     return NextResponse.json(developers, { status: 200 });
   } catch (error: any) {
     console.error('Error fetching developers:', error);
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const db = await getDatabase();
     const body = await request.json();
 
-    const { name, logo, description, website, establishedYear, totalProjects, rating } = body;
+    const { name, logo, description, website, establishedYear, totalProjects, rating, isResidential, isCommercial } = body;
 
     if (!name) {
       return NextResponse.json(
@@ -40,6 +40,8 @@ export async function POST(request: NextRequest) {
       establishedYear: establishedYear ? parseInt(establishedYear) : undefined,
       totalProjects: totalProjects ? parseInt(totalProjects) : undefined,
       rating: rating ? parseInt(rating) : 5,
+      isResidential: isResidential ?? false,
+      isCommercial: isCommercial ?? false,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

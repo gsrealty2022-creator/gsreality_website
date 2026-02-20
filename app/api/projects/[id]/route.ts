@@ -76,6 +76,7 @@ export async function PUT(
       connectivity,
       locationIds,
       type,
+      carParking,
     } = body;
 
     // Build update object
@@ -85,12 +86,12 @@ export async function PUT(
 
     if (name) updateData.name = name;
     if (description) updateData.description = description;
-    if (price !== undefined) updateData.price = parseFloat(price);
+    if (price !== undefined) updateData.price = String(price);
     if (developer) updateData.developer = developer;
     if (location) updateData.location = location;
-    if (bedrooms !== undefined) updateData.bedrooms = parseInt(bedrooms);
-    if (bathrooms !== undefined) updateData.bathrooms = parseInt(bathrooms);
-    if (area !== undefined) updateData.area = parseInt(area);
+    if (bedrooms !== undefined) updateData.bedrooms = String(bedrooms);
+    if (bathrooms !== undefined) updateData.bathrooms = String(bathrooms);
+    if (area !== undefined) updateData.area = String(area);
     if (available !== undefined) updateData.available = available;
     if (images) updateData.images = images;
     if (videos) updateData.videos = videos;
@@ -98,6 +99,7 @@ export async function PUT(
     if (showInPremium !== undefined) updateData.showInPremium = showInPremium;
     if (showInNewlyLaunched !== undefined) updateData.showInNewlyLaunched = showInNewlyLaunched;
     if (showInTopPicks !== undefined) updateData.showInTopPicks = showInTopPicks;
+    if (carParking !== undefined) updateData.carParking = carParking;
     // Highlights
     if (highlights !== undefined) updateData.highlights = highlights;
     // Overview

@@ -39,7 +39,7 @@ export async function PUT(
     const db = await getDatabase();
     const body = await request.json();
 
-    const { name, logo, description, website, establishedYear, totalProjects, rating } = body;
+    const { name, logo, description, website, establishedYear, totalProjects, rating, isResidential, isCommercial } = body;
 
     if (!name) {
       return NextResponse.json(
@@ -56,6 +56,8 @@ export async function PUT(
       establishedYear: establishedYear ? parseInt(establishedYear) : undefined,
       totalProjects: totalProjects ? parseInt(totalProjects) : undefined,
       rating: rating ? parseInt(rating) : undefined,
+      isResidential: isResidential ?? undefined,
+      isCommercial: isCommercial ?? undefined,
       updatedAt: new Date(),
     };
 
