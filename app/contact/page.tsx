@@ -70,7 +70,7 @@ export default function ContactPage() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary text-gray-900 bg-white"
                     placeholder="John Doe"
                   />
                 </div>
@@ -85,7 +85,7 @@ export default function ContactPage() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary text-gray-900 bg-white"
                     placeholder="john@example.com"
                   />
                 </div>
@@ -99,7 +99,7 @@ export default function ContactPage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary text-gray-900 bg-white"
                     placeholder="+91 99203 55513"
                   />
                 </div>
@@ -113,14 +113,14 @@ export default function ContactPage() {
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary text-gray-900 bg-white"
                   >
-                    <option value="">Select a subject</option>
-                    <option value="buying">Buying a Property</option>
-                    <option value="selling">Selling a Property</option>
-                    <option value="renting">Renting a Property</option>
-                    <option value="investment">Investment Consultation</option>
-                    <option value="other">Other Inquiry</option>
+                    <option value="" className="text-gray-900">Select a subject</option>
+                    <option value="buying" className="text-gray-900">Buying a Property</option>
+                    <option value="selling" className="text-gray-900">Selling a Property</option>
+                    <option value="renting" className="text-gray-900">Renting a Property</option>
+                    <option value="investment" className="text-gray-900">Investment Consultation</option>
+                    <option value="other" className="text-gray-900">Other Inquiry</option>
                   </select>
                 </div>
                 <div>
@@ -134,7 +134,7 @@ export default function ContactPage() {
                     onChange={handleChange}
                     required
                     rows={5}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-secondary text-gray-900 bg-white"
                     placeholder="Tell us how we can help you..."
                   />
                 </div>
@@ -177,7 +177,7 @@ export default function ContactPage() {
                     <div>
                       <h3 className="text-lg font-semibold text-[#1a365d] mb-1">Phone</h3>
                       <p className="text-gray-600">
-                        +91 9920355513<br />
+                        +91 9594001313  <br />
                         RERA: A51700044481
                       </p>
                     </div>
@@ -191,7 +191,8 @@ export default function ContactPage() {
                     <div>
                       <h3 className="text-lg font-semibold text-[#1a365d] mb-1">Email</h3>
                       <p className="text-gray-600">
-                        gsrealty2022@gmail.com
+                        sales@gsrealty.in<br />
+                        info@gsrealty.in
                       </p>
                     </div>
                   </div>
@@ -202,17 +203,11 @@ export default function ContactPage() {
                 <h3 className="text-2xl font-bold mb-4">Business Hours</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span>Monday - Friday</span>
-                    <span>9:00 AM - 6:00 PM</span>
+                    <span>Monday - Sunday</span>
+                    <span>10:00 AM - 7:00 PM</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Saturday</span>
-                    <span>10:00 AM - 4:00 PM</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Sunday</span>
-                    <span>Closed</span>
-                  </div>
+
+
                 </div>
               </div>
             </div>

@@ -146,7 +146,10 @@ export default function Footer() {
                                 </div>
                                 <div>
                                     <span className="text-xs text-gray-400 block uppercase tracking-wider mb-1 font-bold">Email Us</span>
-                                    <a href="mailto:gsrealty2022@gmail.com" className="hover:text-brand-secondary transition-colors font-semibold">gsrealty2022@gmail.com</a>
+                                    <div className="flex flex-col space-y-1">
+                                        <a href="mailto:sales@gsrealty.in" className="hover:text-brand-secondary transition-colors font-semibold">sales@gsrealty.in</a>
+                                        <a href="mailto:info@gsrealty.in" className="hover:text-brand-secondary transition-colors font-semibold">info@gsrealty.in</a>
+                                    </div>
                                 </div>
                             </li>
                             <li className="flex items-start">
@@ -157,7 +160,7 @@ export default function Footer() {
                                 </div>
                                 <div>
                                     <span className="text-xs text-gray-400 block uppercase tracking-wider mb-1 font-bold">Call Now</span>
-                                    <a href="tel:+919920355513" className="hover:text-brand-secondary transition-colors font-semibold">+91 9920355513</a>
+                                    <a href="tel:+919594001313" className="hover:text-brand-secondary transition-colors font-semibold">+91 9594001313</a>
                                 </div>
                             </li>
                             <li className="flex items-start">

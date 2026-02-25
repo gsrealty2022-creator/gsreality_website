@@ -43,7 +43,7 @@ const HowItWorks = () => {
                 <div className="text-center mb-16">
                     <h2 className="text-4xl md:text-5xl font-bold text-brand-primary mb-6 tracking-tight">How It Works?</h2>
                     <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">
-                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores
+                        Experience a streamlined and transparent property journey. From initial evaluation to signing the final papers, our expert team ensures a smooth transition to your new space.
                     </p>
                 </div>
 

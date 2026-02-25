@@ -59,7 +59,7 @@ export default function FindByLocations() {
                         <span className="text-gray-900 ml-4">Locations</span>
                     </h2>
                     <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed">
-                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores
+                        Explore properties across premium neighborhoods. From bustling city centers to serene suburban retreats, find the perfect location that matches your lifestyle.
                     </p>
                 </div>
 
@@ -85,7 +85,7 @@ export default function FindByLocations() {
                             <div className="p-6 flex items-center justify-between">
                                 <div>
                                     <h3 className="text-xl font-bold text-brand-primary mb-1">
-                                        {location.name}, {location.state}
+                                        {location.name}
                                     </h3>
                                     <p className="text-gray-400 text-sm">
                                         {location.propertyCount} {location.propertyCount === 1 ? 'project' : 'projects'}

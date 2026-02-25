@@ -11,19 +11,19 @@ interface HeroSlide {
 
 const DEFAULT_SLIDES: HeroSlide[] = [
   {
-    title: "Find Your Sweet Home",
+    title: "Buy . Sell . Invest",
     subtitle: "Premium properties in prime locations",
     image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
     order: 0
   },
   {
-    title: "Luxury Living Redefined",
+    title: "Buy . Sell . Invest",
     subtitle: "Experience elegance in every corner",
     image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2070&auto=format&fit=crop",
     order: 1
   },
   {
-    title: "Modern Architecture",
+    title: "Buy . Sell . Invest",
     subtitle: "Built for the next generation",
     image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2070&auto=format&fit=crop",
     order: 2
@@ -104,12 +104,14 @@ export default function Hero() {
   return (
     <section className="relative w-full h-[90vh] min-h-[700px] overflow-hidden">
       {/* White Banner Area Below Navbar */}
-      <div className="absolute top-0 left-0 right-0 bg-white z-10 h-32 md:h-40 flex items-center">
+      <div className="absolute top-0 left-0 right-0 bg-white z-10 h-16 md:h-20 flex items-center">
         <div className="container mx-auto px-4 w-full">
           {/* Main Heading */}
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight inline-block animate-fade-in" key={currentSlide}>
-            {slides[currentSlide]?.title || "Find Your Sweet Home"}
-          </h1>
+          <div className="flex flex-col border-l-2 border-[#C5A028] pl-5 md:pl-8 py-0.5">
+            <h1 className="text-base md:text-lg lg:text-xl font-light tracking-[0.15em] text-[#0f172a] uppercase animate-fade-in" key={currentSlide}>
+              {slides[currentSlide]?.title || "Buy Sell Invest"}
+            </h1>
+          </div>
         </div>
       </div>
 
@@ -220,17 +222,17 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Middle Row: Three Dropdowns */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+              {/* Middle Row: Dropdowns */}
+              <div className={`grid grid-cols-1 ${propertyType === 'residential' ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-2`}>
                 {/* Location Dropdown */}
                 <div className="relative">
                   <select
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="w-full px-2.5 py-2 text-xs font-bold border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary text-gray-900 appearance-none bg-white pr-7"
+                    className="w-full px-2.5 py-2 text-xs border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary text-gray-900 appearance-none bg-white pr-7"
                     style={{ backgroundImage: 'none' }}
                   >
-                    <option value="">All Main Locations</option>
+                    <option value="" disabled hidden>Locations</option>
                     {allLocations.map((loc) => (
                       <option key={loc._id || loc.id} value={loc.id || loc._id}>
                         {loc.name}
@@ -252,11 +254,22 @@ export default function Hero() {
                     className="w-full px-2.5 py-2 text-xs border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary text-gray-900 appearance-none bg-white pr-7"
                     style={{ backgroundImage: 'none' }}
                   >
-                    <option value="">All Types</option>
-                    <option value="house">House</option>
-                    <option value="apartment">Apartment</option>
-                    <option value="villa">Villa</option>
-                    <option value="condo">Condo</option>
+                    <option value="" disabled hidden>Types</option>
+                    {propertyType === 'residential' ? (
+                      <>
+                        <option value="apartment">Apartments</option>
+                        <option value="villa">Villa</option>
+                        <option value="bungalow">Bungalow</option>
+                        <option value="penthouse">Pent House</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="office">Office</option>
+                        <option value="shop">Shop</option>
+                        <option value="retail">Retail</option>
+                        <option value="warehouse">Warehouse</option>
+                      </>
+                    )}
                   </select>
                   <div className="absolute right-2.5 top-1/2 transform -translate-y-1/2 pointer-events-none">
                     <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -265,26 +278,29 @@ export default function Hero() {
                   </div>
                 </div>
 
-                {/* Beds Dropdown */}
-                <div className="relative">
-                  <select
-                    value={beds}
-                    onChange={(e) => setBeds(e.target.value)}
-                    className="w-full px-2.5 py-2 text-xs border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary text-gray-900 appearance-none bg-white pr-7"
-                    style={{ backgroundImage: 'none' }}
-                  >
-                    <option value="">All Beds</option>
-                    <option value="1">1 Bed</option>
-                    <option value="2">2 Beds</option>
-                    <option value="3">3 Beds</option>
-                    <option value="4">4+ Beds</option>
-                  </select>
-                  <div className="absolute right-2.5 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
+                {/* Configurations Dropdown (Residential Only) */}
+                {propertyType === 'residential' && (
+                  <div className="relative">
+                    <select
+                      value={beds}
+                      onChange={(e) => setBeds(e.target.value)}
+                      className="w-full px-2.5 py-2 text-xs border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary text-gray-900 appearance-none bg-white pr-7"
+                      style={{ backgroundImage: 'none' }}
+                    >
+                      <option value="" disabled hidden>Configurations</option>
+                      <option value="1">1 BHK</option>
+                      <option value="2">2 BHK</option>
+                      <option value="3">3 BHK</option>
+                      <option value="4">4 BHK</option>
+                      <option value="4+">4 BHK+</option>
+                    </select>
+                    <div className="absolute right-2.5 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                      <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Advanced Search Fields - Conditional */}
