@@ -10,6 +10,8 @@ interface Location {
     state: string;
     image: string;
     propertyCount: number;
+    isResidential?: boolean;
+    isCommercial?: boolean;
 }
 
 export default function LocationManager() {
@@ -19,7 +21,9 @@ export default function LocationManager() {
         name: '',
         state: '',
         image: '',
-        propertyCount: 0
+        propertyCount: 0,
+        isResidential: false,
+        isCommercial: false
     });
     const [editingId, setEditingId] = useState<string | null>(null);
     const [uploadingImage, setUploadingImage] = useState(false);
@@ -75,7 +79,9 @@ export default function LocationManager() {
             name: loc.name,
             state: loc.state,
             image: loc.image,
-            propertyCount: loc.propertyCount
+            propertyCount: loc.propertyCount,
+            isResidential: loc.isResidential || false,
+            isCommercial: loc.isCommercial || false
         });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -113,7 +119,7 @@ export default function LocationManager() {
 
             if (response.ok) {
                 setMessage(editingId ? 'Location updated successfully!' : 'Location added successfully!');
-                setFormData({ name: '', state: '', image: '', propertyCount: 0 });
+                setFormData({ name: '', state: '', image: '', propertyCount: 0, isResidential: false, isCommercial: false });
                 setEditingId(null);
                 fetchLocations();
             } else {
@@ -210,6 +216,42 @@ export default function LocationManager() {
                             </div>
                         </div>
 
+                        {/* Categorization */}
+                        <div className="flex flex-col space-y-4">
+                            <label className="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wider text-black">
+                                Categorization
+                            </label>
+                            <div className="flex flex-wrap gap-6 p-4 bg-white border border-gray-200 rounded-lg">
+                                <label className="flex items-center space-x-3 cursor-pointer group">
+                                    <div className={`w-6 h-6 rounded flex items-center justify-center border-2 transition-all ${formData.isResidential ? 'bg-brand-primary border-brand-primary' : 'border-gray-300'}`}>
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.isResidential}
+                                            onChange={(e) => setFormData({ ...formData, isResidential: e.target.checked })}
+                                            className="hidden"
+                                        />
+                                        {formData.isResidential && <span className="text-white text-xs font-bold">✓</span>}
+                                    </div>
+                                    <span className="text-sm font-bold text-gray-700 select-none">Residential</span>
+                                </label>
+                                <label className="flex items-center space-x-3 cursor-pointer group">
+                                    <div className={`w-6 h-6 rounded flex items-center justify-center border-2 transition-all ${formData.isCommercial ? 'bg-brand-primary border-brand-primary' : 'border-gray-300'}`}>
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.isCommercial}
+                                            onChange={(e) => setFormData({ ...formData, isCommercial: e.target.checked })}
+                                            className="hidden"
+                                        />
+                                        {formData.isCommercial && <span className="text-white text-xs font-bold">✓</span>}
+                                    </div>
+                                    <span className="text-sm font-bold text-gray-700 select-none">Commercial</span>
+                                </label>
+                            </div>
+                            <p className="text-[10px] text-gray-500 italic">
+                                * Locations are also automatically categorized if they contain properties of that type.
+                            </p>
+                        </div>
+
                         {formData.image && (
                             <div className="flex flex-col justify-center">
                                 <label className="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wider">Preview</label>
@@ -240,7 +282,7 @@ export default function LocationManager() {
                                 type="button"
                                 onClick={() => {
                                     setEditingId(null);
-                                    setFormData({ name: '', state: '', image: '', propertyCount: 0 });
+                                    setFormData({ name: '', state: '', image: '', propertyCount: 0, isResidential: false, isCommercial: false });
                                 }}
                                 className="px-10 py-3 bg-white border-2 border-gray-200 text-gray-600 rounded-lg font-bold hover:bg-gray-50 transition"
                             >

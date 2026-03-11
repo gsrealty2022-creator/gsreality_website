@@ -8,16 +8,38 @@ export async function GET(request: NextRequest) {
         // Fetch all locations
         const locations = await db.collection('locations').find({}).sort({ createdAt: -1 }).toArray();
 
-        // Dynamically calculate propertyCount for each location
+        // Dynamically calculate property types for each location
         const formattedLocations = await Promise.all(locations.map(async (loc) => {
-            const count = await db.collection('properties').countDocuments({
-                locationIds: { $in: [loc._id.toString(), loc._id] }
+            const locIdStr = loc._id.toString();
+            
+            // Count residential properties
+            const resCount = await db.collection('properties').countDocuments({
+                locationIds: { $in: [locIdStr, loc._id] },
+                $or: [
+                    { type: { $in: ['apartment', 'villa', 'bungalow', 'penthouse', 'residential', 'house'] } }
+                ]
+            });
+
+            // Count commercial properties
+            const commCount = await db.collection('properties').countDocuments({
+                locationIds: { $in: [locIdStr, loc._id] },
+                $or: [
+                    { type: { $in: ['office', 'shop', 'retail', 'warehouse', 'commercial'] } }
+                ]
+            });
+
+            // Count plots (usually considered residential in this context, or both)
+            const plotCount = await db.collection('properties').countDocuments({
+                locationIds: { $in: [locIdStr, loc._id] },
+                type: 'plot'
             });
 
             return {
                 ...loc,
-                id: loc._id.toString(),
-                propertyCount: count // Override stored propertyCount with actual dynamic count
+                id: locIdStr,
+                propertyCount: resCount + commCount + plotCount,
+                isResidential: resCount > 0 || plotCount > 0 || loc.isResidential === true,
+                isCommercial: commCount > 0 || loc.isCommercial === true
             };
         }));
 
@@ -41,7 +63,9 @@ export async function POST(request: NextRequest) {
             name,
             state,
             image,
-            propertyCount
+            propertyCount,
+            isResidential,
+            isCommercial
         } = body;
 
         // Validate required fields
@@ -64,12 +88,13 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Create location document
         const location = {
             name,
             state,
             image,
             propertyCount: propertyCount ? parseInt(propertyCount) : 0,
+            isResidential: isResidential === true,
+            isCommercial: isCommercial === true,
             createdAt: new Date(),
             updatedAt: new Date(),
         };

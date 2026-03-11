@@ -48,7 +48,7 @@ export async function PUT(
         const db = await getDatabase();
         const body = await request.json();
 
-        const { name, state, image, propertyCount } = body;
+        const { name, state, image, propertyCount, isResidential, isCommercial } = body;
 
         const updateData: any = {
             updatedAt: new Date()
@@ -58,6 +58,8 @@ export async function PUT(
         if (state) updateData.state = state;
         if (image) updateData.image = image;
         if (propertyCount !== undefined) updateData.propertyCount = parseInt(propertyCount);
+        if (isResidential !== undefined) updateData.isResidential = isResidential === true;
+        if (isCommercial !== undefined) updateData.isCommercial = isCommercial === true;
 
         const result = await db.collection('locations').updateOne(
             { _id: new ObjectId(id) },

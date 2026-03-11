@@ -205,7 +205,11 @@ export default function Hero() {
 
                   <button
                     type="button"
-                    onClick={() => setPropertyType('residential')}
+                    onClick={() => {
+                      setPropertyType('residential');
+                      setLocation('');
+                      setPropertyTypeFilter('');
+                    }}
                     className={`relative z-10 flex-1 md:flex-none md:min-w-[120px] px-6 py-1.5 text-xs font-bold transition-colors duration-200 ${propertyType === 'residential' ? 'text-white' : 'text-gray-600 hover:text-gray-900'
                       }`}
                   >
@@ -213,7 +217,11 @@ export default function Hero() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setPropertyType('commercial')}
+                    onClick={() => {
+                      setPropertyType('commercial');
+                      setLocation('');
+                      setPropertyTypeFilter('');
+                    }}
                     className={`relative z-10 flex-1 md:flex-none md:min-w-[120px] px-6 py-1.5 text-xs font-bold transition-colors duration-200 ${propertyType === 'commercial' ? 'text-white' : 'text-gray-600 hover:text-gray-900'
                       }`}
                   >
@@ -233,11 +241,13 @@ export default function Hero() {
                     style={{ backgroundImage: 'none' }}
                   >
                     <option value="" disabled hidden>Locations</option>
-                    {allLocations.map((loc) => (
-                      <option key={loc._id || loc.id} value={loc.id || loc._id}>
-                        {loc.name}
-                      </option>
-                    ))}
+                    {allLocations
+                      .filter(loc => propertyType === 'residential' ? loc.isResidential : loc.isCommercial)
+                      .map((loc) => (
+                        <option key={loc._id || loc.id} value={loc.id || loc._id}>
+                          {loc.name}
+                        </option>
+                      ))}
                   </select>
                   <div className="absolute right-2.5 top-1/2 transform -translate-y-1/2 pointer-events-none">
                     <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
