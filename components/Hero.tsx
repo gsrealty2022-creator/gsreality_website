@@ -108,7 +108,7 @@ export default function Hero() {
         <div className="container mx-auto px-4 w-full">
           {/* Main Heading */}
           <div className="flex flex-col border-l-2 border-[#C5A028] pl-5 md:pl-8 py-0.5">
-            <h1 className="text-base md:text-lg lg:text-xl font-light tracking-[0.15em] text-[#0f172a] uppercase animate-fade-in" key={currentSlide}>
+            <h1 className="text-base md:text-lg lg:text-xl font-bold tracking-[0.15em] text-[#0f172a] uppercase animate-fade-in" key={currentSlide}>
               {slides[currentSlide]?.title || "Buy Sell Invest"}
             </h1>
           </div>
@@ -258,16 +258,15 @@ export default function Hero() {
                     {propertyType === 'residential' ? (
                       <>
                         <option value="apartment">Apartments</option>
-                        <option value="villa">Villa</option>
-                        <option value="bungalow">Bungalow</option>
+                        <option value="villa">Villa/Bungalow</option>
+
                         <option value="penthouse">Pent House</option>
                       </>
                     ) : (
                       <>
                         <option value="office">Office</option>
                         <option value="shop">Shop</option>
-                        <option value="retail">Retail</option>
-                        <option value="warehouse">Warehouse</option>
+
                       </>
                     )}
                   </select>
